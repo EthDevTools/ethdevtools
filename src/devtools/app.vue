@@ -4,6 +4,7 @@
       router-link(:to='{name: "logs"}') Logs
       router-link(:to='{name: "abi-playground"}') ABI Explorer
       router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
+      router-link(:to='{name: "salt-explorer"}') Address Events
     router-view
 
 </template>
@@ -65,4 +66,29 @@ body {
   }
 
 }
+
+.pointer {
+  cursor: pointer;
+}
+.red {
+  color: red;
+}
+#app {
+  font-family: Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.col {
+  width:25%;
+}
+.flex {
+   display: flex;
+ }
+ .mx2 {
+   margin-left: 2em;
+   margin-right: 2em;
+ }
+ .m1 {
+   margin:0em 1em 1em 0em;
+ }
 </style>

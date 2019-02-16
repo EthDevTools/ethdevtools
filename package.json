@@ -4,7 +4,7 @@
   "description": "ETH Dev Tools Chrome Extension",
   "private": true,
   "scripts": {
-    "lint": "LOAD_ENV=production eslint --ext .js,.vue src/",
+    "lint": "LOAD_ENV=production eslint --fix --ext .js,.vue src/",
     "dev": "webpack --config build/webpack.dev.conf.js --hide-modules",
     "build": "webpack --config build/webpack.prod.conf.js -p --progress --hide-modules --colors"
   },
@@ -25,6 +25,7 @@
     "uuid": "^3.2.1",
     "vue": "^2.5.2",
     "vue-awesome": "^2.3.4",
+    "vue-json-pretty": "^1.4.1",
     "vue-meta": "^1.4.3",
     "vue-router": "^3.0.1",
     "vue-table-component": "git+https://git@github.com/theoephraim/vue-table-component.git",
