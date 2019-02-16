@@ -6,9 +6,10 @@
 console.log('inject script loaded');
 
 window.addEventListener('message', (e) => {
+  console.log('3) event heard by window listener');
   if (e.source !== window) return;
   if (e.data.w3dt_action) {
-    console.log('sending message to chrome runtime', e.data);
+    console.log('2) sending message to chrome runtime', e.data);
     chrome.runtime.sendMessage(e.data);
   }
 });
@@ -16,8 +17,9 @@ window.addEventListener('message', (e) => {
 
 // This is the block that actually gets injected into our page
 function injectedScript(win) {
+  console.log('injected script');
   function emitW3dtAction(action, details) {
-    console.log(`emit actionzzz - ${action}`, details);
+    console.log(`2) emit an event for action - ${action}`, details);
     win.postMessage({
       w3dt_action: action,
       ...typeof details === 'string' ? { message: details } : details,
@@ -32,12 +34,12 @@ function injectedScript(win) {
 
     const currentProviderSend = currentProvider.send;
     const newSend = function (...args) {
-      console.log('running patched send method');
+      console.log('1) web3 is triggered, this is patched version');
       const requestId = Math.floor(Math.random() * 1000000);
       emitW3dtAction('send', {
         sendId: requestId,
         method: args[0],
-        args: args[1],
+        args,
       });
       const prom = currentProviderSend.apply(currentProvider, args);
       prom.then((...results) => {
