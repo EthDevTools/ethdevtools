@@ -1,6 +1,8 @@
-
 window.addEventListener('message', (e) => {
-  if (e.source === window && e.data.web3Detected) {
+  if (e.source !== window) return;
+  if (e.data.web3Detected) {
+    chrome.runtime.sendMessage(e.data);
+  } else if (e.data.web3log) {
     chrome.runtime.sendMessage(e.data);
   }
 });
@@ -28,6 +30,12 @@ function detectWeb3(win) {
       }, '*');
     }
   }, 100);
+
+  window.onclick = (event) => {
+    win.postMessage({
+      web3log: { id: +new Date(), label: 'another log!' },
+    }, '*');
+  };
 }
 
 
