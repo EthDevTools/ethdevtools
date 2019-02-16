@@ -3,11 +3,12 @@ import Vue from 'vue';
 
 import '@/lib/vue-setup';
 import store from './store';
+// import router from './router';
 
-import root from './root.vue';
 
-console.log('DEVTOOLS PANEL INIT!');
-console.log();
+import app from './app';
+
+const router = require('./router').default;
 
 chrome.runtime.onMessage.addListener((payload, sender) => {
   // filter out any messages coming from other tabs
@@ -24,5 +25,6 @@ Vue.config.productionTip = false;
 new Vue({
   el: '#root',
   store,
-  render: (h) => h(root),
+  router,
+  render: (h) => h(app),
 });

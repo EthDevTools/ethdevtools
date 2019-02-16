@@ -1,8 +1,7 @@
 window.addEventListener('message', (e) => {
   if (e.source !== window) return;
-  if (e.data.web3Detected) {
-    chrome.runtime.sendMessage(e.data);
-  } else if (e.data.web3log) {
+  if (e.data.web3log) {
+    console.log('sending message to chrome runtime', e.data);
     chrome.runtime.sendMessage(e.data);
   }
 });
@@ -26,7 +25,7 @@ function detectWeb3(win) {
     if (ethereumGlobalDetected) {
       console.log('> web3 detected!');
       win.postMessage({
-        web3Detected: true,
+        web3log: { id: 0, label: 'Web3 Detected !' },
       }, '*');
     }
   }, 100);

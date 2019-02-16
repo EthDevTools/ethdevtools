@@ -31,7 +31,7 @@ module.exports = {
     background: resolve('./background'),
     // devtools
     devtoolsbg: resolve('./devtools-background'),
-    devtoolspanel: resolve('./devtools/panel'),
+    devtools: resolve('./devtools'),
     // injected into pages
     inject: resolve('./inject'),
     // content: resolve('./content'),
@@ -154,7 +154,7 @@ module.exports = {
     // new webpack.DefinePlugin({'process.env': publicEnv}),
     htmlPage('home', 'app', ['tab']),
     htmlPage('popup', 'popup', ['popup']),
-    htmlPage('devtoolspanel', 'devtoolspanel', ['devtoolspanel']),
+    htmlPage('devtools', 'devtools', ['devtools']),
     htmlPage('devtoolsbg', 'devtoolsbg', ['devtoolsbg']),
     htmlPage('options', 'options', ['options']),
     htmlPage('background', 'background', ['background']),

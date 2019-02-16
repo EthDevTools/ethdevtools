@@ -6,11 +6,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    logs: {
-      1: { id: 1, label: 'dummy log 1' },
-      2: { id: 2, label: 'dummy log 2' },
-      3: { id: 3, label: 'dummy log 3' },
-    },
+    logs: {}, // will be keyed by ID
   },
   getters: {
     logs: (state) => _.values(state.logs),
