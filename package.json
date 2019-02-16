@@ -9,6 +9,7 @@
     "build": "webpack --config build/webpack.prod.conf.js -p --progress --hide-modules --colors"
   },
   "dependencies": {
+    "abi-decoder": "^1.2.0",
     "axios": "^0.17.1",
     "date-fns": "^1.29.0",
     "decamelize-keys-deep": "^0.1.1",
@@ -30,7 +31,8 @@
     "vue-router": "^3.0.1",
     "vue-table-component": "git+https://git@github.com/theoephraim/vue-table-component.git",
     "vuelidate": "^0.7.4",
-    "vuex": "^3.1.0"
+    "vuex": "^3.1.0",
+    "web3": "^1.0.0-beta.46"
   },
   "devDependencies": {
     "autoprefixer": "^9.4.3",

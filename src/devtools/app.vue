@@ -6,7 +6,6 @@
       router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
       router-link(:to='{name: "salt-explorer"}') Address Events
     router-view
-
 </template>
 <script>
   import { mapGetters } from 'vuex';

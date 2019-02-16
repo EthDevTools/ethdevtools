@@ -25,16 +25,11 @@ module.exports = {
   mode: isDevelopment ? 'development' : 'production',
   context: path.resolve(__dirname, '../'),
   entry: {
-    tab: resolve('./tab'),
     popup: resolve('./popup'),
-    options: resolve('./options'),
     background: resolve('./background'),
     // devtools
     devtoolsbg: resolve('./devtools-background'),
     devtools: resolve('./devtools'),
-    // injected into pages
-    inject: resolve('./inject'),
-    // content: resolve('./content'),
   },
   output: {
     path: path.join(__dirname, '..', 'dist'),
@@ -167,6 +162,11 @@ module.exports = {
       { from: path.join(__dirname, '..', 'static') },
       {
         from: path.join(__dirname, '..', 'src', 'manifest.json' ),
+      },
+      // getting webpack errors if inject is a proper entry point
+      {
+        from: path.join(__dirname, '..', 'src', 'inject.js' ),
+        to: 'js',
       },
     ]),
   ],
