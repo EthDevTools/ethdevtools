@@ -18,9 +18,7 @@ export default {
   },
   created() { },
   mounted() {
-    console.log(ABIPlayGround);
     const playground = React.createElement(ABIPlayGround, { contracts: this.contracts }, null);
-    console.log(playground);
     const playgroundDiv = document.getElementsByClassName('playground-div')[0];
     ReactDOM.render(playground, playgroundDiv);
   },
