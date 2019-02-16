@@ -1,0 +1,8 @@
+.DS_Store
+config/local.js
+node_modules/
+/dist/
+/design
+npm-debug.log*
+/.vscode
+TODO

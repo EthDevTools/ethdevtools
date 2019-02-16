@@ -1,0 +1,61 @@
+// AUTO INCLUDED
+// DO NOT ADD ANY STYLES - ONLY VARIABLES AND MIXINS!
+
+// TYPE
+@default-font-size: 16px;     // Default font-size in px
+@default-line-height: 1.5;    // Default line height in ems
+
+@regular-font: Helvetica, Arial, sans-serif;
+@fancy-font: Helvetica, Arial, sans-serif;
+
+@default-line-height-em: unit(@default-line-height, em);
+@small-font-size: 14px;
+
+
+// Overall site width for the static pages.
+@max-width: 1440px;
+@wrapper-width: 1100px;
+
+// Media Query Breakpoints
+// small used to be up to 767 but was increased to accomodate desktop nav
+                          // small is up to 894
+@mobile-small: 330px;     // mobile small is the width of an iPhone 5
+@medium-screen: 768px;    // medium is 768-1279
+@large-screen: 1280px;    // large is 1280 and up
+// having issues geting the +1's to work correctly
+
+// Grid
+@num-cols: 12;
+@max-row-width-px: 1440px;
+@max-row-width: unit(@max-row-width-px);
+@col-gutter: 20;                        // Column gutter, in pixels
+@default-float: left;                   // text direction (ltr = left, rtl = right)
+
+
+@header-bar-height--desktop: 60px;
+@header-bar-height--mobile: 50px;
+
+// AUTOMATIC VARIABLES - DO NOT MODIFY /////////////////////////////////////////
+@medium-screen-minus-1: (@medium-screen - 1);
+@large-screen-minus-1: (@large-screen - 1);
+
+@mq-screen: ~"only screen";
+@mq-small: @mq-screen;
+@mq-medium: ~"only screen and (min-width:@{medium-screen})";
+@mq-large: ~"only screen and (min-width:@{large-screen})";
+
+@mq-mobile-small-only: ~"only screen and (max-width:@{mobile-small})";
+@mq-small-only: ~"only screen and (max-width:@{medium-screen-minus-1})";
+@mq-medium-only: ~"only screen and (min-width:@{medium-screen}) and (max-width:@{large-screen-minus-1})";
+
+@mq-landscape: ~"only screen and (orientation: landscape)";
+@mq-portrait: ~"only screen and (orientation: portrait)";
+
+
+// Automatic variables
+@em: unit(@default-font-size, em);  // Shorthand for outputting ems, e.g. "12/@em"
+@rem: unit(@default-font-size, rem);  // Shorthand for outputting ems, e.g. "12/@em"
+@num-decimal-places: 5;
+@default-float-opp: if(@default-float = 'left', 'right', 'left');
+
+@grid-gutter: @col-gutter * .5 / @rem;

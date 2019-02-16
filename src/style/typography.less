@@ -1,0 +1,188 @@
+
+@h1-font-size: 44;
+@h2-font-size: 36;
+@h3-font-size: 26;
+@h4-font-size: 22;
+@h5-font-size: 12;
+@h6-font-size: 10;
+
+
+body, html {
+  color: @bluegray-text;
+  font-family: @regular-font;
+  font-weight: normal;
+  font-style: normal;
+  line-height: @default-line-height*100%;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Default header styles */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  // font-weight: normal;
+  // .light-weight();
+  margin: .5em 0;
+  line-height: 1.5em;
+  color: @black;
+  font-family: @fancy-font;
+  position: relative;
+
+  small {
+    font-size: .85em;
+    line-height: 0;
+  }
+
+  &.not-fancy {
+    font-family: @regular-font;
+  }
+}
+h1, .h1 { .font-rem(@h1-font-size); }
+h2, .h2 { .font-rem(@h2-font-size); }
+h3, .h3 { .font-rem(@h3-font-size); }
+h4, .h4 { .font-rem(@h4-font-size); margin: 0; }
+h5, .h5 { .font-rem(@h5-font-size); margin: 0; }
+h6, .h6 { .font-rem(@h6-font-size); margin: 0; }
+
+// .subheader { @include subheader; }
+
+/* Default Paragraph Styles */
+p {
+  margin-bottom: 1em;
+  line-height: @default-line-height-em;
+  text-rendering: optimizeLegibility;
+  &.small {
+    font-size: .85em;
+  }
+  &.narrow {
+    max-width: 32em;
+    margin: 1em auto;
+
+    @media @mq-small-only {
+      padding: 0 1.5em;
+    }
+  }
+}
+
+.small{
+  font-size: .85em;
+  line-height: 1.4em;
+}
+.tiny{
+  font-size: .7em;
+  line-height: 1.4em;
+}
+
+
+/* Default Link Styles */
+a {
+  text-decoration: none;
+  transition: color .2s;
+  color: #145bce;
+}
+p a {
+  text-decoration: underline;
+  color: currentColor;
+
+  &.no-decoration {
+    text-decoration: none;
+  }
+  &:hover, &:focus {
+    color: #000;
+  }
+}
+
+
+/* Other Helpful Defaults */
+em, i {
+  .italic();
+  line-height: inherit;
+}
+
+strong, b, .strong {
+  .bold();
+  line-height: inherit;
+}
+
+small, .small {
+  .font-rem(14);
+  line-height: inherit;
+}
+
+.text-left {
+  text-align: left;
+}
+
+
+/* More header styles */
+h2.underlined,
+h3.underlined {
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    height: 5px;
+    width: 34px;
+    background-color: currentColor;
+  }
+}
+
+h5 {
+  .small-title();
+  color: #555;
+}
+
+
+// Helper classes
+.font-rem(@size) {
+  font-size:  unit(@size, px);
+  font-size:  unit(@size/@default-font-size, rem);
+}
+.light-weight {
+  // We dont have a light weight for now
+  font-weight: 400;
+  font-style: normal;
+}
+.regular-weight {
+  font-weight: 400;
+  font-style: normal;
+}
+.bold {
+  // font-family: @bold-font;
+  font-weight: 600;
+  font-style: normal;
+}
+.italic {
+  font-style: italic;
+}
+
+.fancy-font() {
+  font-family: @fancy-font;
+}
+
+.small-title {
+  .bold();
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.truncate-text {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.nowrap {
+  white-space: nowrap;
+}
+
+.align-left { text-align: left; }
+.align-right { text-align: right; }
+.align-center { text-align: center; }
