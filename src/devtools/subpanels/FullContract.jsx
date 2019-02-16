@@ -5,12 +5,6 @@ import MethodCallTracker from './MethodCallTracker.jsx';
 class FullContract extends Component {
   constructor(props, context) {
     super(props);
-
-    this.events = props.contract.abi.filter(entry => entry.type === 'event');
-    this.methods = props.contract.abi.filter(entry => entry.type !== 'event');
-    this.constants = props.contract.abi.filter(entry => entry.type === 'function' && entry.constant === true && entry.inputs.length === 0);
-    this.lookups = props.contract.abi.filter(entry => entry.type === 'function' && entry.constant === true && entry.inputs.length !== 0);
-    this.mutators = props.contract.abi.filter(entry => entry.type === 'function' && entry.constant === false);
   }
 
   displayValue(value) {
@@ -34,7 +28,14 @@ class FullContract extends Component {
   }
 
   render() {
+
     const contract = this.props.contract;
+    const events = contract.abi.filter(entry => entry.type === 'event');
+    const methods = contract.abi.filter(entry => entry.type !== 'event');
+    const constants = contract.abi.filter(entry => entry.type === 'function' && entry.constant === true && entry.inputs.length === 0);
+    const lookups = contract.abi.filter(entry => entry.type === 'function' && entry.constant === true && entry.inputs.length !== 0);
+    const mutators = contract.abi.filter(entry => entry.type === 'function' && entry.constant === false);
+
     // if(!contract.initialized) {
     //   return <div>
     //     <h2>{this.props.contract} Contract Tester</h2>
@@ -50,7 +51,7 @@ class FullContract extends Component {
       <div>
         <div>Constants:</div>
         <div>
-          {this.constants.map(constant => <div key={constant.name}>
+          {constants.map(constant => <div key={constant.name}>
             <span>{constant.name}: </span>
           </div>)}
         </div>
@@ -58,7 +59,7 @@ class FullContract extends Component {
       <div>
         <div>Lookups:</div>
         <div>
-          {this.lookups.map(method => <MethodCallTracker key={method.name}
+          {lookups.map(method => <MethodCallTracker key={method.name}
             ABIMethod={method}
             constant={true} />)}
         </div>
@@ -66,7 +67,7 @@ class FullContract extends Component {
       <div>
         <div>Mutators</div>
         <div>
-          {this.mutators.map(method => <MethodCallTracker key={method.name}
+          {mutators.map(method => <MethodCallTracker key={method.name}
             ABIMethod={method}
             constant={false} />)}
         </div>
