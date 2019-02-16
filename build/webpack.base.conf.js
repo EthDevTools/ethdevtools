@@ -73,6 +73,13 @@ module.exports = {
         }
       },
       {
+        test: /\.flow/,
+        include: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
+      },
+      {
         test: /\.less$/,
         use: [
           // isDevelopment ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
