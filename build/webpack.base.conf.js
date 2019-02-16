@@ -48,7 +48,7 @@ module.exports = {
   },
   resolve: {
     modules: ['src', 'node_modules'],
-    extensions: ['.js', '.vue', '.json'],
+    extensions: ['.js', '.vue', '.json', '.mjs'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': path.resolve(__dirname, '../src'),
@@ -64,6 +64,11 @@ module.exports = {
           { loader: 'css-loader', options: { sourceMap: isDevelopment } },
           { loader: 'postcss-loader' },
         ],
+      },
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: "javascript/auto",
       },
       {
         test: /\.less$/,
