@@ -12,10 +12,14 @@ const router = require('./router').default;
 
 chrome.runtime.onMessage.addListener((payload, sender) => {
   console.log('devtools pane message', payload);
+  if (_.get(sender, 'tab.id') !== chrome.devtools.inspectedWindow.tabId) return;
+  processEvent(payload);
+});
+
+
+function processEvent(payload) {
   // filter out any messages coming from other tabs
   if (!payload.w3dt_action) return;
-  if (_.get(sender, 'tab.id') !== chrome.devtools.inspectedWindow.tabId) return;
-
   if (payload.w3dt_action === 'contract') {
     store.commit('ADD_CONTRACT', payload);
   } else if (payload.w3dt_action === 'send') {
@@ -25,9 +29,17 @@ chrome.runtime.onMessage.addListener((payload, sender) => {
   } else if (payload.w3dt_action === 'message') {
     store.commit('ADD_MESSAGE_LOG', payload);
   }
-});
-window.store = store; // for debugging
+}
 
+chrome.runtime.sendMessage({
+  w3dt_action: 'fetch-events-history',
+  tabId: chrome.devtools.inspectedWindow.tabId,
+}, (history) => {
+  console.log('adding from history');
+  _.each(history, (event) => {
+    processEvent(event);
+  });
+});
 
 Vue.config.productionTip = false;
 /* eslint-disable no-new */

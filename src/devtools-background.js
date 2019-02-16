@@ -42,7 +42,7 @@ chrome.runtime.onMessage.addListener((payload) => {
 
 // do an initial check when devtools are first opened on this tab
 chrome.runtime.sendMessage({
-  w3dt_action: 'check_enabled', tabId: chrome.devtools.inspectedWindow.tabId,
+  w3dt_action: 'check-enabled', tabId: chrome.devtools.inspectedWindow.tabId,
 }, (enabled) => {
   if (enabled) createPanel();
 });
