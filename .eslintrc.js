@@ -65,5 +65,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'radix': 0,
     'no-confusing-arrow': 0,
+    'no-use-before-define': 0,
+    'prefer-rest-params': 0,
   }
 }

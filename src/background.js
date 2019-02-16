@@ -3,32 +3,30 @@ const tabs = {};
 chrome.runtime.onMessage.addListener((payload, sender, sendResponse) => {
   console.log('background msg listener!', payload, sender);
 
-  if (payload.w3dt_action === 'check_enabled') {
-    sendResponse(tabs[payload.tabId] && tabs[payload.tabId].enabled);
+  const action = payload.w3dt_action;
+  if (!action) return;
+
+  const tabId = sender.tab ? sender.tab.id : payload.tabId;
+  if (!tabId) return;
+  tabs[tabId] = tabs[tabId] || {};
+
+  if (action === 'check_enabled') {
+    sendResponse(tabs[tabId].enabled);
     return;
   }
 
-  if (sender.tab && payload.web3log) {
-    tabs[sender.tab.id] = [sender.tab.id] || {};
-
-    // enable popup if not enabled already
-    if (!tabs[sender.tab.id].enabled) {
-      tabs[sender.tab.id].enabled = true;
-
-      console.log(`Enabling tab ${sender.tab.id} ETHDevTools`);
-      chrome.browserAction.setIcon({
-        tabId: sender.tab.id,
-        path: {
-          // 16: 'icons/16.png',
-          // 48: 'icons/48.png',
-          128: '/icons/128-enabled.png',
-        },
-      });
-      // chrome.browserAction.setPopup({
-      //   tabId: sender.tab.id,
-      //   popup: req.web3Detected ? 'popups/enabled.html' : 'popups/disabled.html',
-      // });
-    }
+  // enable popup if not enabled already
+  if (!tabs[sender.tab.id].enabled) {
+    tabs[sender.tab.id].enabled = true;
+    console.log(`Enabling tab ${sender.tab.id} ETHDevTools`);
+    chrome.browserAction.setIcon({
+      tabId: sender.tab.id,
+      path: {
+        // 16: 'icons/16.png',
+        // 48: 'icons/48.png',
+        128: '/icons/128-enabled.png',
+      },
+    });
   }
 });
 

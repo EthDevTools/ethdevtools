@@ -5,7 +5,6 @@
       router-link(:to='{name: "abi-playground"}') ABI Explorer
       router-link(:to='{name: "graph-explorer"}') ETHql Explorer
     router-view
-
 </template>
 <script>
   import { mapGetters } from 'vuex';
