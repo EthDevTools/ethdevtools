@@ -66,6 +66,20 @@ module.exports = {
         type: "javascript/auto",
       },
       {
+        test: /\.jsx$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
+      },
+      {
+        test: /\.flow/,
+        include: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
+      },
+      {
         test: /\.less$/,
         use: [
           // isDevelopment ? 'vue-style-loader' : MiniCssExtractPlugin.loader,

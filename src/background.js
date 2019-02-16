@@ -10,9 +10,11 @@ chrome.runtime.onMessage.addListener((payload, sender, sendResponse) => {
   if (!tabId) return;
   tabs[tabId] = tabs[tabId] || {};
 
-  if (action === 'check_enabled') {
+  if (action === 'check-enabled') {
     sendResponse(tabs[tabId].enabled);
     return;
+  } else if (action === 'fetch-events-history') {
+    sendResponse(tabs[tabId].history);
   }
 
   // enable popup if not enabled already
@@ -28,6 +30,10 @@ chrome.runtime.onMessage.addListener((payload, sender, sendResponse) => {
       },
     });
   }
+
+  // keep a history of events so when the devtools tab is opened we have all events
+  tabs[tabId].history = tabs[tabId].history || [];
+  tabs[tabId].history.push(payload);
 });
 
 chrome.extension.onConnect.addListener((port) => {

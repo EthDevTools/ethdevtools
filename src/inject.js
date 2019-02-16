@@ -3,8 +3,7 @@
 
 /* eslint-disable no-param-reassign */
 
-console.log('inject script loaded');
-
+// this just passes along the messages to our extension
 window.addEventListener('message', (e) => {
   console.log('3) event heard by window listener');
   if (e.source !== window) return;
@@ -15,7 +14,8 @@ window.addEventListener('message', (e) => {
 });
 
 
-// This is the block that actually gets injected into our page
+// This is the code that actually gets injected into our page
+// and has access to the window / web3 global
 function injectedScript(win) {
   console.log('injected script');
   function emitW3dtAction(action, details) {
@@ -27,7 +27,6 @@ function injectedScript(win) {
   }
 
   function patchWeb3(web3) {
-    console.log('patching provider!', web3);
     const { currentProvider } = web3;
 
     const contractDecoders = {};
@@ -52,22 +51,20 @@ function injectedScript(win) {
     };
     currentProvider.send = newSend;
 
-    web3.setProvider('');
-    web3.setProvider(currentProvider);
+    // web3.setProvider('');
+    // web3.setProvider(currentProvider);
 
-    const oldContract = web3.eth.Contract;
-    const newContract = function (...args) {
+    const OldContract = web3.eth.Contract;
+    web3.eth.Contract = function (...args) {
       emitW3dtAction('contract', {
         address: args[1],
         abi: args[0],
       });
-      return oldContract.apply(oldContract, args);
+      return new OldContract(...args);
     };
-    web3.eth.Contract = newContract;
     return web3;
   }
 
-  console.log('LOOK FOR WEB3');
   if (win.web3) {
     patchWeb3(win.web3);
     emitW3dtAction('log', 'web3 detected!');
