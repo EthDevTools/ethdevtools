@@ -49,7 +49,7 @@ const prodWebpackConfig = merge(baseWebpackConfig, {
       verbose: false,
     }),
     new MiniCssExtractPlugin({
-      filename: 'static/css/[name].[contenthash].css',
+      filename: 'static/style.css',
     }),
     // keep module.id stable when vendor modules does not change
     new webpack.HashedModuleIdsPlugin(),

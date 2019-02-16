@@ -2,56 +2,54 @@
 // We check to see if our global hook has detected web3 on the page
 // If yes, create the DevTools panel; otherwise poll for 10 seconds
 
-let panelLoaded = false;
-let panelShown = false;
+let mainPanel;
+const panelLoaded = false;
+const panelShown = false;
 let pendingAction;
 let created = false;
 let checkWeb3Interval;
 let checkCount = 0;
 
-function createPanelIfHasWeb3() {
+// create a long-lived communication channel between this page and the
+// main extension "background"
+const port = chrome.runtime.connect({
+  name: `devtoolsbg-${chrome.devtools.inspectedWindow.tabId}`,
+});
+port.onMessage.addListener((payload) => {
+  if (payload.action === 'connected') {
+    if (created) return;
+    chrome.devtools.panels.create(
+      'ETHDevTools', 'icons/128.png', 'pages/devtoolspanel.html',
+      (panel) => {
+        mainPanel = panel;
+        console.log('dev tools panel created cb');
+        // panel.onShown.addListener(() => {
+        //   chrome.runtime.sendMessage('web3-panel-shown');
+        //   panelShown = true;
+        //   // if (panelLoaded) executePendingAction();
+        // });
+        // panel.onHidden.addListener(() => {
+        //   chrome.runtime.sendMessage('web3-panel-hidden');
+        //   panelShown = false;
+        // });
+      },
+    );
+    created = true;
+  } else if (payload.action === 'disconnected') {
+
+  }
+});
+
+
+function checkForWeb3() {
   if (created || checkCount++ > 10) return;
-
-  panelLoaded = false;
-  panelShown = false;
-
-  chrome.devtools.inspectedWindow.eval('window.globalweb3check()', (hasWeb3) => {
-    console.log('devtools bg - ', hasWeb3);
-  });
-
-  chrome.devtools.inspectedWindow.eval('console.log("EVAL")', (hasWeb3) => {
-    console.log('eval callback');
-  });
-
-  if (false) created = true;
-
-  // chrome.devtools.inspectedWindow.eval('!!(window.__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue)', (hasVue) => {
-  //   if (!hasVue || created) return;
-
-  //   clearInterval(checkWeb3Interval);
-  //   created = true;
-  //   chrome.devtools.panels.create(
-  //     'ETHDevTools', 'icons/128.png', 'pages/devtoolspanel.html',
-  //     // panel loaded callback
-  //     (panel) => {
-  //       panel.onShown.addListener(() => {
-  //         chrome.runtime.sendMessage('web3-panel-shown');
-  //         panelShown = true;
-  //         // if (panelLoaded) executePendingAction();
-  //       });
-  //       panel.onHidden.addListener(() => {
-  //         chrome.runtime.sendMessage('web3-panel-hidden');
-  //         panelShown = false;
-  //       });
-  //     },
-  //   );
-  // });
+  port.postMessage({ action: 'check-connection' });
 }
 
 // Runtime messages
 
-chrome.runtime.onMessage.addListener((request) => {
-
+chrome.runtime.onMessage.addListener((payload) => {
+  console.log('devtoolsbg - runtime message listener', payload);
   // if (request === 'vue-panel-load') {
   //   onPanelLoad()
   // } else if (request.vueToast) {
@@ -120,6 +118,6 @@ chrome.runtime.onMessage.addListener((request) => {
 //   })
 // }
 
-chrome.devtools.network.onNavigated.addListener(createPanelIfHasWeb3);
-checkWeb3Interval = setInterval(createPanelIfHasWeb3, 1000);
-createPanelIfHasWeb3();
+chrome.devtools.network.onNavigated.addListener(checkForWeb3);
+checkWeb3Interval = setInterval(checkForWeb3, 1000);
+checkForWeb3();

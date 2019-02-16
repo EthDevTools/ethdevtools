@@ -59,7 +59,8 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          isDevelopment ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+          // isDevelopment ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+          'vue-style-loader',
           { loader: 'css-loader', options: { sourceMap: isDevelopment } },
           { loader: 'postcss-loader' },
         ],
@@ -67,7 +68,8 @@ module.exports = {
       {
         test: /\.less$/,
         use: [
-          isDevelopment ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+          // isDevelopment ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+          'vue-style-loader',
           { loader: 'css-loader',
             options: {
               /* uncomment for css-modules */

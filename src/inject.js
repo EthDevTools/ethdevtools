@@ -5,7 +5,6 @@ window.addEventListener('message', (e) => {
   }
 });
 
-
 function installScript(fn) {
   const source = `;(${fn.toString()})(window)`;
 
