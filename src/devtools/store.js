@@ -42,7 +42,7 @@ export default new Vuex.Store({
       logMessage.args = payload.args;
       logMessage.method = payload.method;
 
-      state.sends.push(logMessage);
+      state.sends.unshift(logMessage);
       Vue.set(state.logs, `send|${payload.id}`, logMessage);
     },
     UPDATE_SEND_RESPONSE: (state, payload) => {

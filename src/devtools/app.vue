@@ -34,6 +34,9 @@ body {
   padding: 0;
   margin: 0;
   .devtools-nav {
+    position: sticky;
+    z-index:2;
+    top: 0px;
     width: 100%;
     background: #F3F3F3;
     border-bottom: 1px solid #D0D0D0;

@@ -9,15 +9,14 @@
         {{time}}
       </template>
       <template v-else >
-        {{repeatTimes[0]}}
+        {{time}}
         <template v-if="showExtraTimes">
-          <div :key="repeatTime" v-for="repeatTime in repeatTimes.slice(1)">
+          <div :key="repeatTime" v-for="repeatTime in repeatTimes">
             {{repeatTime}}
           </div>
         </template>
-
         <div class="red pointer" @click="showExtraTimes = !showExtraTimes">
-          +{{repeatTimes.length - 1}} retries
+          +{{repeatTimes.length}} retries
         </div>
       </template>
     </div>
@@ -103,7 +102,7 @@ export default {
     repeatTimes() {
       if (!this.nextIsRepeat) return [];
       let repeats = [];
-      for (let i = this.i + 1; i < this.logs.length; i++) {
+      for (let i = this.i - 1; i >= 0; i--) {
         if (!this.isRepeat(i)) break;
         repeats.push(i);
       }

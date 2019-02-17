@@ -1,6 +1,6 @@
 <template>
   <div >
-      <div class="flex">
+      <div class="flex fixed">
         <div class="col name">Name3</div>
         <div class="col time">Time</div>
         <div class="col grow-1 mx2">Parameters</div>
@@ -16,7 +16,7 @@
         :key="log.id"
         :log="log"
         :result="results[log.id]"
-        :nextIsRepeat="repeat(i + 1)"
+        :nextIsRepeat="repeat(i - 1)"
         v-if="!repeat(i) && hasResult(i)" />
       </template>
   </div>
@@ -34,15 +34,13 @@ import Log from './Log';
     methods: {
       hasResult(i) {
         const send = this.sends[i];
-        console.log({ send });
         const result = this.results[send.id];
-        console.log({ result });
         return !!result;
       },
       repeat(i) {
         const curr = this.sends[i];
         if (!curr) return false;
-        const prev = this.sends.length >= i ? this.sends[i - 1] : null;
+        const prev = this.sends.length > i ? this.sends[i + 1] : null;
 
         if (!prev) return false;
         return prev.method === curr.method
@@ -59,6 +57,14 @@ import Log from './Log';
 </script>
 
 <style >
+.fixed {
+  position: sticky;
+  top:27px;
+  background-color: white;
+  z-index:1;
+  border-bottom: 1px solid black;
+  margin-bottom: 2em;
+}
 .col {
   padding:10px;
   font-size: 14px;
