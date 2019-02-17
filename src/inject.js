@@ -38,6 +38,7 @@ function injectedScript(win) {
       ...typeof details === 'string' ? { message: details } : details,
     }, '*');
   }
+  window.emitW3dtAction = emitW3dtAction;
 
   function attemptPatchWeb3() {
     const globalEthereum = win.ethereum;
@@ -83,12 +84,17 @@ function injectedScript(win) {
     // globalWeb3.setProvider(currentProvider);
 
     const _OriginalContract = globalWeb3.eth.Contract;
+    window.originalContracts = {};
     globalWeb3.eth.Contract = function (...args) {
+      const originalContract = new _OriginalContract(...args);
+      const contractEntry = {};
+      contractEntry[originalContract.address] = originalContract;
+      Object.assign(window.originalContracts, contractEntry);
       emitW3dtAction('contract', {
         address: args[1],
         abi: args[0],
       });
-      return new _OriginalContract(...args);
+      return originalContract;
     };
   }
 

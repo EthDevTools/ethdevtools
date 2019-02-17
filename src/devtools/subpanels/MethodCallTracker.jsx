@@ -3,7 +3,10 @@ import React, { Component } from 'react';
 class MethodCallTracker extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      result: '',
+      input: {},
+    };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -29,15 +32,32 @@ class MethodCallTracker extends Component {
   }
 
   handleInputChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({ input: { [event.target.name]: event.target.value } });
+  }
+
+  explorerUpdate(payload) {
+    console.log('explorerUpdate')
+    console.log({payload})
+    this.setState({ result: JSON.stringify(payload.result) });
   }
 
   handleSubmit() {
+    window.explorerUpdate = this.explorerUpdate.bind(this);
+    const contractAddress = this.props.contractAddress;
+    const methodName = this.props.ABIMethod.name;
+    const params = Object.values(this.state.input).toString();
+    console.log({ params });
     if(this.props.constant) {
-      // this.props.method.cacheCall(...Object.values(this.state));
+      const evalText = `window.originalContracts['${contractAddress}'].methods.${methodName}(${params}).call().then(result => { window.emitW3dtAction('explorer-result', { result }) })`
+      this.setState({ result: '🔄' });
+      console.log({evalText});
+      chrome.devtools.inspectedWindow.eval(evalText);
     }
     else {
-      // this.props.method.cacheSend(...Object.values(this.state));
+      const evalText = `window.originalContracts['${contractAddress}'].methods.${methodName}(${params}).send().then(result => { window.emitW3dtAction('explorer-result', { result }) })`
+      this.setState({ result: '🔄' });
+      console.log({evalText});
+      chrome.devtools.inspectedWindow.eval(evalText);
     }
   }
 
@@ -58,6 +78,7 @@ class MethodCallTracker extends Component {
           placeholder={inputLabel} />;
       })}</span>
       <button onClick={this.handleSubmit}>{this.props.constant? 'Call' : 'Send'}</button>
+      {this.state.result && <span>{this.state.result}</span>}
     </div>;
   }
 

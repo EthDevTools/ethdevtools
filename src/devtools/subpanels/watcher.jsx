@@ -64,7 +64,7 @@ class Watcher extends Component {
       </select>}
 
       {!this.state.watching && this.state.custom && <span>
-        Enter contract address:
+        Enter address:
         <input disabled={this.state.watching} type="text" value={this.state.addressInput} onChange={this.handleInputChange} />
       </span>}
       {!this.state.watching && addressChosen && <button onClick={this.startWatching}>
