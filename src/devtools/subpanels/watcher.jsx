@@ -50,7 +50,7 @@ class Watcher extends Component {
       this.state.selectedAddress === 'custom' && this.state.addressInput
     );
     return <div>
-      <div className="select-style"></div>
+      <div className="select-style">
         {!this.state.watching && <select disabled={this.state.watching} value={this.state.selectedAddress} onChange={this.handleChange}>
           <option disabled value=''>Select an address</option>
           {this.props.accounts.map((account, index) => <option key={toChecksumAddress(account)}
