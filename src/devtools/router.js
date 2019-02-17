@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import LogsViewer from './subpanels/logs-viewer.vue';
+import LogsViewer from './subpanels/logs-viewer/index.vue';
 import ABIPlayground from './subpanels/abi-playground.vue';
 import GraphExplorer from './subpanels/graph-explorer.vue';
 import SaltWatcher from './subpanels/salt-watcher.vue';

@@ -1,7 +1,12 @@
+import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { processMethod, processResult } from './assets/utils';
+// import { processMethod, processResult } from './assets/utils';
+import { AbiCoder } from 'web3-eth-abi';
+import AbiDecoder from 'abi-decoder';
+
+const abiCoder = new AbiCoder();
 
 Vue.use(Vuex);
 
@@ -19,26 +24,6 @@ export default new Vuex.Store({
     logs: (state) => _.orderBy(_.values(state.logs), 'time'),
     contracts: (state) => _.values(state.contracts),
     accounts: (state) => state.accounts,
-    condensedLogs: (state, getters) => {
-      const clogs = [];
-      let lastLog;
-      _.each(getters.logs, (log) => {
-        if (
-          lastLog
-          && log.method === lastLog.method
-          && JSON.stringify(log.params) === JSON.stringify(lastLog.params)
-          && JSON.stringify(log.results) === JSON.stringify(lastLog.results)
-        ) {
-          lastLog.count++;
-        } else {
-          const newLog = _.cloneDeep(log);
-          newLog.count = 1;
-          clogs.push(newLog);
-          lastLog = newLog;
-        }
-      });
-      return clogs;
-    },
   },
   mutations: {
     CLEAR_LOGS: (state) => {
@@ -56,7 +41,7 @@ export default new Vuex.Store({
       } else {
         data.type = 'send';
         data.time = +new Date();
-
+        data.annotatedParams = annotateParams(data.method, data.params);
         Vue.set(state.logs, `req|${data.id}`, data);
 
         // const processLogMessage = processMethod[data.method] || processMethod.default;
@@ -128,3 +113,9 @@ export default new Vuex.Store({
   },
   actions: {},
 });
+
+
+function annotateParams(method, params) {
+  if (['eth_accounts', 'net_version', 'eth_gasPrice'].includes(method)) return null;
+  return params;
+}

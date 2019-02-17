@@ -8,7 +8,7 @@
       | {{ log.time | logtime }}
       .response-time(v-if='resultDelay') result +{{resultDelay}}ms
     .col.params.m1
-      json(v-if='log.params' deep :data='log.params')
+      json(v-if='log.annotatedParams' deep :data='log.annotatedParams')
     .col.returns.m1
       json(v-if='log.result' deep :data='log.result')
 
