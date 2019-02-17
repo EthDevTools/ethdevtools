@@ -14,23 +14,23 @@ chrome.runtime.onMessage.addListener((payload, sender, sendResponse) => {
   if (action === 'check-enabled') {
     sendResponse(tabs[tabId].enabled);
     return;
+  } else if (action === 'page-reload') {
+    tabs[tabId].history = [];
+    return;
   } else if (action === 'fetch-events-history') {
     sendResponse(tabs[tabId].history);
   }
 
   // enable popup if not enabled already
-  if (!tabs[sender.tab.id].enabled) {
-    tabs[sender.tab.id].enabled = true;
-    console.log(`Enabling tab ${sender.tab.id} ETHDevTools`);
-    chrome.browserAction.setIcon({
-      tabId: sender.tab.id,
-      path: {
-        // 16: 'icons/16.png',
-        // 48: 'icons/48.png',
-        128: '/icons/128-enabled.png',
-      },
-    });
-  }
+  tabs[sender.tab.id].enabled = true;
+  chrome.browserAction.setIcon({
+    tabId: sender.tab.id,
+    path: {
+      // 16: 'icons/16.png',
+      // 48: 'icons/48.png',
+      128: '/icons/128-enabled.png',
+    },
+  });
 
   // keep a history of events so when the devtools tab is opened we have all events
   tabs[tabId].history = tabs[tabId].history || [];

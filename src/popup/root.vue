@@ -1,18 +1,21 @@
 <template lang="pug">
   .web3-status-popup
-    div Web3&nbsp;not&nbsp;detected
+    div ETHDevTools
 </template>
 
 <script>
-  export default {
-    data: () => ({
-    }),
-    computed: { },
-    created() { },
-    mounted() { },
-    methods: {
-    },
-  };
+
+export default {
+  data: () => ({
+    enabled: false,
+  }),
+  computed: { },
+  created() { },
+  mounted() {
+  },
+  methods: {
+  },
+};
 </script>
 
 <style lang="less">

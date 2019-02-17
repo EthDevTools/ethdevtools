@@ -21,7 +21,9 @@ function processEvent(payload) {
   // console.log('processEvent', payload);
   // filter out any messages coming from other tabs
   if (!payload.w3dt_action) return;
-  if (payload.w3dt_action === 'contract') {
+  if (payload.w3dt_action === 'page-reload') {
+    store.commit('CLEAR_LOGS', payload);
+  } else if (payload.w3dt_action === 'contract') {
     store.commit('ADD_CONTRACT', payload);
   } else if (payload.w3dt_action === 'send') {
     store.commit('ADD_SEND_LOG', payload);
@@ -41,15 +43,15 @@ function processEvent(payload) {
   }
 }
 
-// chrome.runtime.sendMessage({
-//   w3dt_action: 'fetch-events-history',
-//   tabId: chrome.devtools.inspectedWindow.tabId,
-// }, (history) => {
-//   console.log('adding from history');
-//   _.each(history, (event) => {
-//     processEvent(event);
-//   });
-// });
+chrome.runtime.sendMessage({
+  w3dt_action: 'fetch-events-history',
+  tabId: chrome.devtools.inspectedWindow.tabId,
+}, (history) => {
+  console.log('adding from history');
+  _.each(history, (event) => {
+    processEvent(event);
+  });
+});
 
 Vue.config.productionTip = false;
 /* eslint-disable no-new */

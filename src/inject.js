@@ -19,13 +19,15 @@ window.addEventListener('message', (e) => {
   } catch (err) {
     // just allow easier nested gets
   }
-
-
   if (e.data.w3dt_action) {
     console.log(`> ${e.data.w3dt_action}`, e.data);
     chrome.runtime.sendMessage(e.data);
   }
 });
+chrome.runtime.sendMessage({
+  w3dt_action: 'page-reload',
+});
+
 
 // This is the code that actually gets injected into our page
 // and has access to the window / web3 global
