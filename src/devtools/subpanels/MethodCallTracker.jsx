@@ -54,7 +54,7 @@ class MethodCallTracker extends Component {
       chrome.devtools.inspectedWindow.eval(evalText);
     }
     else {
-      const evalText = `window.originalContracts['${contractAddress}'].methods.${methodName}(${params}).send().then(result => { window.emitW3dtAction('explorer-result', { result }) })`
+      const evalText = `web3.eth.getAccounts().then(accounts => { window.originalContracts['${contractAddress}'].methods.${methodName}(${params}).send({ from: accounts[0] }).then(result => { window.emitW3dtAction('explorer-result', { result }) }) })`
       this.setState({ result: '🔄' });
       console.log({evalText});
       chrome.devtools.inspectedWindow.eval(evalText);

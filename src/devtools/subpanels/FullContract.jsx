@@ -63,6 +63,7 @@ class FullContract extends Component {
         <div><b>Mutators</b> (contract functions that may mutate)</div>
         <div>
           {mutators.map(method => <MethodCallTracker key={method.name}
+            contractAddress={this.props.contract.address}
             ABIMethod={method}
             constant={false} />)}
         </div>
