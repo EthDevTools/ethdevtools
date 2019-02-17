@@ -33,17 +33,18 @@ function injectedScript(win) {
 
     const currentProviderSend = currentProvider.send;
     const newSend = function (...args) {
-      console.log('1) web3 is triggered, this is patched version');
+      console.log('1) web3 is triggered, this is patched version', args);
       const requestId = Math.floor(Math.random() * 1000000);
       emitW3dtAction('send', {
-        sendId: requestId,
+        id: requestId,
         method: args[0],
+        foo: 'bar',
         args,
       });
       const prom = currentProviderSend.apply(currentProvider, args);
       prom.then((...results) => {
         emitW3dtAction('send-response', {
-          sendId: requestId,
+          id: requestId,
           results,
         });
       });

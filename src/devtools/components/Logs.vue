@@ -7,7 +7,8 @@
         <div class="col grow-1 mx2">Returns</div>
       </div>
       <template v-for="(log, i) in logs">
-        <log
+        <div :key="i">{{i}} - {{log}}</div>
+        <!-- <log
         :i="i"
         :logs="logs"
         :results="results"
@@ -16,25 +17,23 @@
         :log="log"
         :result="results[log.id]"
         :nextIsRepeat="repeat(i + 1)"
-        v-if="!repeat(i)" />
+        v-if="!repeat(i)" /> -->
       </template>
   </div>
 </template>
 
 <script>
-  import Log from './Log';
+  import { mapState } from 'vuex';
+import Log from './Log';
 
   export default {
     name: 'Logs',
-    props: {
-      logs: {
-        type: Array,
-        default: [],
-      },
-      results: {
-        type: Object,
-        default: {},
-      },
+    computed: {
+      ...mapState('logs', 'results'),
+    },
+    mounted() {
+      console.log('logs from state', this.logs);
+      console.log('results from state', this.results);
     },
     methods: {
       repeat(i) {

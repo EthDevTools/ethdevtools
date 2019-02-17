@@ -10,8 +10,9 @@ export const processMethod = {
     params: null,
   }),
   eth_call: (args, _, contracts) => {
+    console.log('eth_call');
     const contractAddress = `${args[1][0].to.toLowerCase()}`;
-    const methodSig = args[1][0].data;
+    const methodSig = args[1][0].data.slice(0, 10);
 
     let decodedInput; let name; let
       params;
@@ -25,14 +26,16 @@ export const processMethod = {
       name = methodSig;
       params = methodSig;
     }
-    return {
+    const foo = {
       to: contractAddress,
       name,
       params,
     };
+    console.log('add eth call with this data', foo);
+    return foo;
   },
   eth_gasPrice: (args) => {
-    console.log('gas price', args);
+    console.log('eth_gasPrice');
     return {
       to: null,
       name: null,
@@ -40,8 +43,9 @@ export const processMethod = {
     };
   },
   eth_sendTransaction: (args, _, contracts) => {
+    console.log('eth_sendTransaction');
     const contractAddress = `${args[1][0].to.toLowerCase()}`;
-    const methodSig = args[1][0].data;
+    const methodSig = args[1][0].data.slice(0, 10);
 
     let decodedInput = null;
     if (contracts[contractAddress]) {
@@ -76,16 +80,30 @@ export const processResult = {
     params: results.length ? results[0] : results,
   }),
   eth_call: (args, results, _, contracts) => {
-    console.log('!!!!!!!!!!!!! eth_call, process result', { args });
-    let params;
-    const method = abiDecoder.getABIs().find((m) => m.signature === args[1][0].data.slice(0, 10));
-    console.log(abiDecoder.getABIs().map((m) => `${m.name}-${m.signature}`));
-    console.log(args);
+    console.log('eth_call in parser 2');
+    let method; let params;
+    console.log({ args });
+    const contractAddress = args[1][0].to;
+    console.log({ contractAddress });
+    console.log({ contracts });
+    console.log(contracts[contractAddress]);
+    if (contracts[contractAddress]) {
+      abiDecoder.addABI(contracts[contractAddress].abi);
+      const abis = abiDecoder.getABIs();
+      console.log({ abis });
+      const sig = args[1][0].data.slice(0, 10);
+      console.log({ sig });
+      method = abis.find((m) => m.signature === args[1][0].data.slice(0, 10));
+    }
+
+    console.log({ method });
     if (method) {
       console.log('method', method);
+      console.log(web3ABI);
       params = web3ABI.decodeParameters(method.outputs, results.join(''));
       console.log(results);
     }
+    console.log({ method }, { params });
     return {
       params,
     };

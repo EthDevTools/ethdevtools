@@ -1,22 +1,25 @@
 <template lang="pug">
 .logs-viewer
-  h1 Logs Viewer
-  ul
-    li(v-for='log in logs') {{ log.label }}
+  h1 test
+  logs
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+// import { mapGetters } from 'vuex';
+import Logs from '../components/Logs';
 
 export default {
   data: () => ({
   }),
   computed: {
-    ...mapGetters(['logs']),
+    // ...mapGetters(['logs']),
   },
   created() { },
   mounted() { },
   methods: { },
+  components: {
+    Logs,
+  },
 };
 </script>
 
