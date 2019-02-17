@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener((payload, sender) => {
 });
 
 function processEvent(payload) {
-  console.log('processEvent', payload);
+  // console.log('processEvent', payload);
   // filter out any messages coming from other tabs
   if (!payload.w3dt_action) return;
   if (payload.w3dt_action === 'contract') {

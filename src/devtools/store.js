@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign, prefer-destructuring */
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 import Vue from 'vue';
@@ -12,7 +13,7 @@ Vue.use(Vuex);
 
 const EQ_PARAMS = ['method', 'params', 'result'];
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     logs: {}, // will be keyed by ID,
     sends: [],
@@ -41,7 +42,7 @@ export default new Vuex.Store({
       } else {
         data.type = 'send';
         data.time = +new Date();
-        data.annotatedParams = annotateParams(data.method, data.params);
+        annotateParams(data);
         Vue.set(state.logs, `req|${data.id}`, data);
 
         // const processLogMessage = processMethod[data.method] || processMethod.default;
@@ -69,38 +70,38 @@ export default new Vuex.Store({
         label: payload.message,
       });
     },
-    ADD_SEND_LOG: (state, payload) => {
-      console.log('ADD_SEND', { payload });
+    // ADD_SEND_LOG: (state, payload) => {
+    //   console.log('ADD_SEND', { payload });
 
-      const processLogMessage = processMethod[payload.method] || processMethod.default;
-      const logMessage = processLogMessage(payload.args, payload.method, state.contracts);
-      logMessage.method = payload.method;
-      logMessage.id = payload.id;
-      logMessage.time = +new Date();
-      logMessage.args = payload.args;
-      logMessage.method = payload.method;
+    //   const processLogMessage = processMethod[payload.method] || processMethod.default;
+    //   const logMessage = processLogMessage(payload.args, payload.method, state.contracts);
+    //   logMessage.method = payload.method;
+    //   logMessage.id = payload.id;
+    //   logMessage.time = +new Date();
+    //   logMessage.args = payload.args;
+    //   logMessage.method = payload.method;
 
-      state.sends.unshift(logMessage);
-      Vue.set(state.logs, `send|${payload.id}`, logMessage);
-    },
-    UPDATE_SEND_RESPONSE: (state, payload) => {
-      console.log('ADD_SEND_RESPONSE', { payload });
+    //   state.sends.unshift(logMessage);
+    //   Vue.set(state.logs, `send|${payload.id}`, logMessage);
+    // },
+    // UPDATE_SEND_RESPONSE: (state, payload) => {
+    //   console.log('ADD_SEND_RESPONSE', { payload });
 
-      const { args } = state.sends.find((s) => s.id === payload.id);
-      const method = args[0];
-      const processLogResult = processResult[method] || processResult.default;
-      const logResult = processLogResult(args, payload.results, method, state.contracts);
-      logResult.id = payload.id;
-      logResult.time = +new Date();
-      logResult.method = payload.method;
+    //   const { args } = state.sends.find((s) => s.id === payload.id);
+    //   const method = args[0];
+    //   const processLogResult = processResult[method] || processResult.default;
+    //   const logResult = processLogResult(args, payload.results, method, state.contracts);
+    //   logResult.id = payload.id;
+    //   logResult.time = +new Date();
+    //   logResult.method = payload.method;
 
-      Vue.set(state.results, logResult.id, logResult);
-      Vue.set(state.logs[`send|${payload.id}`], 'response', payload.response);
+    //   Vue.set(state.results, logResult.id, logResult);
+    //   Vue.set(state.logs[`send|${payload.id}`], 'response', payload.response);
 
-      if (args[0] === 'eth_accounts') {
-        Vue.set(state.accounts, 'accounts', logResult.params);
-      }
-    },
+    //   if (args[0] === 'eth_accounts') {
+    //     Vue.set(state.accounts, 'accounts', logResult.params);
+    //   }
+    // },
     ADD_CONTRACT: (state, payload) => {
       console.log('ADD_CONTRACT', { payload });
       Vue.set(state.contracts, payload.address.toLowerCase(), payload);
@@ -109,13 +110,40 @@ export default new Vuex.Store({
         payload,
         label: `CONTRACT ADDED - ${payload.address}`,
       });
+      AbiDecoder.addABI(payload.abi);
     },
   },
   actions: {},
 });
 
 
-function annotateParams(method, params) {
-  if (['eth_accounts', 'net_version', 'eth_gasPrice'].includes(method)) return null;
-  return params;
+function annotateParams(data) {
+  const { method, params } = data;
+  if (['eth_accounts', 'net_version', 'eth_gasPrice'].includes(method)) {
+    data.annotatedParams = null;
+  } else if (method === 'eth_getTransactionReceipt') {
+    data.annotatedParams = params[1][0];
+  } else if (['eth_call', 'eth_sendTransaction'].includes(method)) {
+    // need .slice(0,10) ?
+    const contractAddress = params[0].to;
+    const methodSig = params[0].data;
+    const gasPrice = params[0].gasPrice;
+
+    data.contractAddress = contractAddress;
+    const contract = store.state.contracts[contractAddress];
+    let decodedInput;
+    if (contract) {
+      decodedInput = AbiDecoder.decodeMethod(methodSig);
+      data.callName = `${decodedInput.name}(${decodedInput.params.map((p) => p.type).join(',')})`;
+      data.annotatedParams = decodedInput.params.length ? decodedInput.params : null;
+    } else {
+      data.callName = methodSig;
+      data.annotatedParams = methodSig;
+    }
+    console.log(data);
+  } else {
+    console.log(`UNKNOWN METHOD -- ${method}`);
+  }
 }
+
+export default store;
