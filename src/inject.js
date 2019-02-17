@@ -5,10 +5,8 @@
 
 // this just passes along the messages to our extension
 window.addEventListener('message', (e) => {
-  console.log('3) event heard by window listener');
   if (e.source !== window) return;
   if (e.data.w3dt_action) {
-    console.log('2) sending message to chrome runtime', e.data);
     chrome.runtime.sendMessage(e.data);
   }
 });
@@ -17,9 +15,7 @@ window.addEventListener('message', (e) => {
 // This is the code that actually gets injected into our page
 // and has access to the window / web3 global
 function injectedScript(win) {
-  console.log('injected script');
   function emitW3dtAction(action, details) {
-    console.log(`2) emit an event for action - ${action}`, details);
     win.postMessage({
       w3dt_action: action,
       ...typeof details === 'string' ? { message: details } : details,
@@ -33,7 +29,6 @@ function injectedScript(win) {
 
     const currentProviderSend = currentProvider.send;
     const newSend = function (...args) {
-      console.log('1) web3 is triggered, this is patched version');
       const requestId = Math.floor(Math.random() * 1000000);
       emitW3dtAction('send', {
         id: requestId,

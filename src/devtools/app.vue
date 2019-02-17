@@ -1,9 +1,10 @@
 <template lang="pug">
   .devtools-panel
     nav.devtools-nav
+      a(href="https://github.com/theoephraim/ethdevtools/" target="_blank") ⚒ Eth Dev Tools ⚒
       router-link(:to='{name: "logs"}') Logs
-      router-link(:to='{name: "abi-playground"}') ABI Explorer
       router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
+      router-link(:to='{name: "abi-playground"}') ABI Explorer
       router-link(:to='{name: "salt-watcher"}') Watcher
     router-view
 </template>
@@ -40,7 +41,7 @@ body {
     width: 100%;
     background: #F3F3F3;
     border-bottom: 1px solid #D0D0D0;
-    a {
+    > * {
       display: inline-block;
       color: #5A5A5A;
       text-decoration: none;
