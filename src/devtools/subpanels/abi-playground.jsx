@@ -29,7 +29,7 @@ class ABIPlayGround extends Component {
             </option>)}
           </select>
         </div>
-        <div className="custom-graph">
+        <div className="abi-playground-content">
           {selectedContract && <FullContract contract={selectedContract} />}
         </div>
       </div>

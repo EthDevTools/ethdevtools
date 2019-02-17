@@ -40,7 +40,7 @@ const store = new Vuex.Store({
         data.resultTime = +new Date();
         const req = state.logs[`req|${data.id}`];
         const annotatedResult = getAnnotatedResult(req, data.result);
-        Vue.set(state.logs[`req|${data.id}`], 'result', data.result);
+        if (typeof data.result !== 'undefined') Vue.set(state.logs[`req|${data.id}`], 'result', data.result);
         Vue.set(state.logs[`req|${data.id}`], 'annotatedResult', annotatedResult);
         Vue.set(state.logs[`req|${data.id}`], 'resultTime', +new Date());
         if (req.method === 'eth_accounts') {
@@ -145,6 +145,10 @@ function annotateParams(data) {
   }
 }
 function getAnnotatedResult(req, result) {
+  if (!req) {
+    console.log('getAnnotatedResults of no req', req, result);
+    return null;
+  }
   const { method, params } = req;
   if (method === 'eth_gasPrice') {
     const cost = new BigNumber(result, 16);

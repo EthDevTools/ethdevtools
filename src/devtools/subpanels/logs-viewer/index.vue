@@ -10,7 +10,7 @@
         input(type='checkbox' v-model='groupSimilar')
         span Group similar
     span
-      b Hide:
+      b.mr1 Hide:
       label
         input(type='checkbox' v-model='hideEthAccounts')
         span eth_accounts
@@ -85,6 +85,9 @@ export default {
 </script>
 
 <style lang="less">
+.mr1 {
+  margin-right:5px;
+}
 .logs-viewer {
   font-size: 11px;
   line-height: 16px;
@@ -98,6 +101,7 @@ export default {
 
   .header {
     flex-grow: none;
+    padding:0px 5px;
   }
   .logs {
     flex: 1 0 0;
@@ -124,9 +128,8 @@ export default {
   }
   .settings {
     > span {
-      &:not(.no-move) {
-        margin-top: -3px;
-      }
+      height:29px;
+      overflow: hidden;
       margin-right: 5px;
       display: inline-block;
     }

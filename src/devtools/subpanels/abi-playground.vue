@@ -27,7 +27,7 @@ export default {
 </script>
 
 <style lang="less">
-.abi-playground {
-
+.abi-playground-content {
+ padding:0px 20px;
 }
 </style>

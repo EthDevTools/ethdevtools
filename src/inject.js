@@ -6,12 +6,11 @@
 // import Web3 from 'web3';
 // this just passes along the messages to our extension
 window.addEventListener('message', (e) => {
-  console.log(e);
   if (e.source !== window) return;
   try {
     // messages coming from metamask
     if (e.data.data.name === 'provider') {
-      console.log('>METAMASKMESSAGE', e.data.data.data);
+      // console.log('>METAMASKMESSAGE', e.data.data.data);
       chrome.runtime.sendMessage({
         w3dt_action: 'metamask-message',
         data: e.data.data.data,
@@ -86,9 +85,12 @@ function injectedScript(win) {
     const _OriginalContract = globalWeb3.eth.Contract;
     window.originalContracts = {};
     globalWeb3.eth.Contract = function (...args) {
+      console.log('NEW CONTRACT');
       const originalContract = new _OriginalContract(...args);
       const contractEntry = {};
-      contractEntry[originalContract.address] = originalContract;
+      console.log({ originalContract });
+      const address = originalContract.address || originalContract._address;
+      contractEntry[address] = originalContract;
       Object.assign(window.originalContracts, contractEntry);
       emitW3dtAction('contract', {
         address: args[1],
