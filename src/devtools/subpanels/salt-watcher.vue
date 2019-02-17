@@ -18,7 +18,7 @@ export default {
   },
   created() { },
   mounted() {
-    const watcher = React.createElement(Watcher, { contracts: this.contracts, accounts: this.accounts.accounts || [] }, null);
+    const watcher = React.createElement(Watcher, { contracts: this.contracts, accounts: this.accounts || [] }, null);
     const watcherDiv = document.getElementsByClassName('watcher-div')[0];
     ReactDOM.render(watcher, watcherDiv);
   },
