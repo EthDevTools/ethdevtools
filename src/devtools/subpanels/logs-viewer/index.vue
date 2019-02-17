@@ -17,6 +17,9 @@
       label
         input(type='checkbox' v-model='hideNetVersion')
         span net_version
+      label
+        input(type='checkbox' v-model='hideEthGetBalance')
+        span eth_getBalance
   .header.flex.native-bar
     .col.name Name
     .col.time Time
@@ -37,6 +40,7 @@ export default {
     groupSimilar: true,
     hideEthAccounts: false,
     hideNetVersion: false,
+    hideEthGetBalance: false,
   }),
   computed: {
     ...mapGetters(['logs']),
@@ -46,13 +50,15 @@ export default {
       _.each(this.logs, (log) => {
         if (this.hideNetVersion && log.method === 'net_version') return;
         if (this.hideEthAccounts && log.method === 'eth_accounts') return;
+        if (this.hideEthGetBalance && log.method === 'eth_getBalance') return;
+
 
         if (
           this.groupSimilar
           && lastLog
           && log.method === lastLog.method
           && JSON.stringify(log.params) === JSON.stringify(lastLog.params)
-          && JSON.stringify(log.results) === JSON.stringify(lastLog.results)
+          && (!log.result || JSON.stringify(log.result) === JSON.stringify(lastLog.result))
         ) {
           lastLog.count++;
         } else {
@@ -62,7 +68,7 @@ export default {
           lastLog = newLog;
         }
       });
-      return clogs;
+      return clogs.reverse();
     },
   },
   created() { },

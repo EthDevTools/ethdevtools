@@ -36,7 +36,7 @@ const store = new Vuex.Store({
       // payload.data.id
       // payload.data.method
       // payload.data.params
-      if (data.result) {
+      if (data.result !== undefined) { // can be null!
         data.resultTime = +new Date();
         const req = state.logs[`req|${data.id}`];
         const annotatedResult = getAnnotatedResult(req, data.result);
@@ -146,7 +146,6 @@ function annotateParams(data) {
       data.callName = methodSig;
       data.annotatedParams = methodSig;
     }
-    console.log(data);
   } else {
     console.log(`UNKNOWN METHOD -- ${method}`);
   }
@@ -179,7 +178,12 @@ function getAnnotatedResult(req, result) {
     }
   }
   if (method === 'eth_getTransactionReceipt') {
-
+    if (result && result.logs) {
+      console.log('HAS RESULT!');
+      const annotatedResult = _.cloneDeep(result);
+      annotatedResult.decodedLogs = AbiDecoder.decodeLogs(result.logs);
+      return annotatedResult;
+    }
   }
   return result;
 }

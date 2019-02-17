@@ -38,45 +38,15 @@ export default {
     },
 
     paramsData() {
-      if (!this.log.contractAddress && !this.log.annotatedParams) return null;
-      return {
-        to: this.log.contractAddress,
-        params: this.log.annotatedParams,
-      };
+      if (['eth_call', 'eth_sendTransaction'].includes(this.log.method)) {
+        return { to: this.log.contractAddress, params: this.log.annotatedParams };
+      }
+      if (this.log.method === 'eth_getTransactionReceipt') {
+        return { tx: this.log.params[0] };
+      }
     },
     resultData() {
       return this.log.annotatedResult;
-    },
-
-
-    repeatTimes() {
-      if (!this.nextIsRepeat) return [];
-      let repeats = [];
-      for (let i = this.i + 1; i < this.logs.length; i++) {
-        if (!this.isRepeat(i)) break;
-        repeats.push(i);
-      }
-      repeats = repeats.map((i) => {
-        const log = this.logs[i];
-        const result = this.results[this.logs[i].id];
-        return this.getTime(log, result);
-      });
-      return repeats;
-    },
-    params() {
-      return this.log.params;
-    },
-    returns() {
-      return this.result && this.result.params;
-    },
-    name() {
-      return this.log.method;
-    },
-    name2() {
-      return this.log.name ? this.log.name : false;
-    },
-    time() {
-      return this.getTime(this.log, this.result);
     },
   },
   components: {
