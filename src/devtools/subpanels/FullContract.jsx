@@ -27,12 +27,10 @@ class FullContract extends Component {
     }
   }
 
-  componentDidMount() {
-  }
-
   render() {
 
     const contract = this.props.contract;
+    console.log(this.props.contract);
     const events = contract.abi.filter(entry => entry.type === 'event');
     const methods = contract.abi.filter(entry => entry.type !== 'event');
     const constants = contract.abi.filter(entry => entry.type === 'function' && entry.constant === true && entry.inputs.length === 0);
@@ -44,9 +42,10 @@ class FullContract extends Component {
       <div>
         <div><b>Constants</b> (contract functions with no paramaters that do no mutation):</div>
         <div>
-          {constants.map(constant => <div key={constant.name}>
-            <span>{constant.name} <button>Call</button> </span>
-          </div>)}
+          {constants.map(method => <MethodCallTracker key={method.name}
+            contractAddress={this.props.contract.address}
+            ABIMethod={method}
+            constant={true} />)}
         </div>
       </div>
       <br/>
@@ -54,6 +53,7 @@ class FullContract extends Component {
         <div><b>Lookups</b> (contract functions with paramaters that do no mutation):</div>
         <div>
           {lookups.map(method => <MethodCallTracker key={method.name}
+            contractAddress={this.props.contract.address}
             ABIMethod={method}
             constant={true} />)}
         </div>

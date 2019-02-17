@@ -50,9 +50,9 @@ class Watcher extends Component {
       this.state.selectedAddress === 'custom' && this.state.addressInput
     );
     return <div>
-      <div className="select-style">
+      <div className="select-style"></div>
         {!this.state.watching && <select disabled={this.state.watching} value={this.state.selectedAddress} onChange={this.handleChange}>
-          <option disabled value=''>Select an Address to Watch</option>
+          <option disabled value=''>Select an address</option>
           {this.props.accounts.map((account, index) => <option key={toChecksumAddress(account)}
           value={toChecksumAddress(account)}>
             {toChecksumAddress(account)}
@@ -65,12 +65,12 @@ class Watcher extends Component {
       </div>
       {!this.state.watching && this.state.custom && <div class="custom-graph">
         Address:
+
         <input disabled={this.state.watching} type="text" value={this.state.addressInput} onChange={this.handleInputChange} />
         {!this.state.watching && addressChosen && <button onClick={this.startWatching}>
           Start Watching
         </button>}
       </div>}
-
       {this.state.contractAddress && <WatchAddress doneWatching={this.doneWatching} address={this.state.contractAddress} />}
     </div>;
   }
