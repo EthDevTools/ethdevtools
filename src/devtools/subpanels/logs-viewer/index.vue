@@ -52,10 +52,10 @@ export default {
         if (this.hideEthAccounts && log.method === 'eth_accounts') return;
         if (this.hideEthGetBalance && log.method === 'eth_getBalance') return;
 
-
         if (
           this.groupSimilar
           && lastLog
+          && log.type === 'send'
           && log.method === lastLog.method
           && JSON.stringify(log.params) === JSON.stringify(lastLog.params)
           && (!log.result || JSON.stringify(log.result) === JSON.stringify(lastLog.result))
