@@ -4,6 +4,7 @@
     .col.name
       | {{ log.method }}
       span.repeat-count(v-if='log.count > 1') {{ log.count }}
+      span(v-if='log.callName') {{ log.callName }}
     .col.time
       | {{ log.time | logtime }}
       .response-time(v-if='resultDelay') result +{{resultDelay}}ms
