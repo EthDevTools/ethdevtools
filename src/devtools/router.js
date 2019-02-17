@@ -2,10 +2,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import LogsViewer from './subpanels/logs-viewer';
-import ABIPlayground from './subpanels/abi-playground';
-import GraphExplorer from './subpanels/graph-explorer';
-import SaltWatcher from './subpanels/salt-watcher';
+import LogsViewer from './subpanels/logs-viewer.vue';
+import ABIPlayground from './subpanels/abi-playground.vue';
+import GraphExplorer from './subpanels/graph-explorer.vue';
+import SaltWatcher from './subpanels/salt-watcher.vue';
 
 Vue.use(Router);
 

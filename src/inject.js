@@ -1,79 +1,106 @@
 // This script is injected into the page
 // it is responsible for injecting more scripts and handling communication back to the extension
 
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign, no-underscore-dangle, prefer-destructuring */
 
+// import Web3 from 'web3';
 // this just passes along the messages to our extension
 window.addEventListener('message', (e) => {
-  console.log('3) event heard by window listener');
+  // console.log(e);
+
+  try {
+    // messages coming from metamask
+    if (e.data.data.name === 'provider') {
+      console.log(e.data.data.data);
+      chrome.runtime.sendMessage({
+        w3dt_action: 'metamask-message',
+        data: e.data.data.data,
+      });
+    }
+  } catch (err) {
+    // just allow easier nested gets
+  }
+
   if (e.source !== window) return;
   if (e.data.w3dt_action) {
-    console.log('2) sending message to chrome runtime', e.data);
+    console.log(`> ${e.data.w3dt_action}`, e.data);
     chrome.runtime.sendMessage(e.data);
   }
 });
-
 
 // This is the code that actually gets injected into our page
 // and has access to the window / web3 global
 function injectedScript(win) {
   console.log('injected script');
   function emitW3dtAction(action, details) {
-    console.log(`2) emit an event for action - ${action}`, details);
     win.postMessage({
       w3dt_action: action,
       ...typeof details === 'string' ? { message: details } : details,
     }, '*');
   }
 
-  function patchWeb3(web3) {
-    const { currentProvider } = web3;
+  function attemptPatchWeb3() {
+    const globalEthereum = win.ethereum;
+    const globalWeb3 = win.web3;
+    let currentProvider;
 
-    const contractDecoders = {};
+    if (win.ethereum) {
+      console.log('+ ethereum global found');
+      emitW3dtAction('message', 'ethereum global found!');
+      // currentProvider = win.ethereum;
+    } else {
+      emitW3dtAction('message', 'ethereum global NOT found!');
+      return;
+    }
+    // const localWeb3 = new win.Web3(globalWeb3.currentProvider);
+    console.log(globalEthereum);
+    console.log(globalWeb3);
+    // console.log(localWeb3);
+    console.log({ currentProvider });
+    currentProvider = globalWeb3.currentProvider;
 
-    const currentProviderSend = currentProvider.send;
-    const newSend = function (...args) {
-      console.log('1) web3 is triggered, this is patched version');
-      const requestId = Math.floor(Math.random() * 1000000);
-      emitW3dtAction('send', {
-        id: requestId,
-        method: args[0],
-        args,
-      });
-      const prom = currentProviderSend.apply(currentProvider, args);
-      prom.then((...results) => {
-        emitW3dtAction('send-response', {
-          id: requestId,
-          results,
-        });
-      });
-      return prom;
-    };
-    currentProvider.send = newSend;
+    // const _originalSend = currentProvider.send;
 
-    // web3.setProvider('');
-    // web3.setProvider(currentProvider);
+    // currentProvider.send = function (...args) {
+    //   const requestId = Math.floor(Math.random() * 1000000);
+    //   emitW3dtAction('send', {
+    //     id: requestId,
+    //     method: args[0],
+    //     foo: 'bar',
+    //     args,
+    //   });
+    //   const prom = _originalSend.apply(currentProvider, args);
+    //   prom.then((...results) => {
+    //     emitW3dtAction('send-response', {
+    //       id: requestId,
+    //       results,
+    //     });
+    //   });
+    //   return prom;
+    // };
 
-    const OldContract = web3.eth.Contract;
-    web3.eth.Contract = function (...args) {
+    // globalWeb3.setProvider('');
+    // globalWeb3.setProvider(currentProvider);
+
+    const _OriginalContract = globalWeb3.eth.Contract;
+    globalWeb3.eth.Contract = function (...args) {
       emitW3dtAction('contract', {
         address: args[1],
         abi: args[0],
       });
-      return new OldContract(...args);
+      return new _OriginalContract(...args);
     };
-    return web3;
   }
 
-  if (win.web3) {
-    patchWeb3(win.web3);
-    emitW3dtAction('log', 'web3 detected!');
-  }
+  console.log('+ injected patch script');
+  // setInterval(attemptPatchWeb3, 1000);
+  attemptPatchWeb3();
 }
 
 
 // inject the web3 patch
 function installScript(fn) {
+  console.log('injecting script');
   const source = `;(${fn.toString()})(window)`;
 
   const script = document.createElement('script');

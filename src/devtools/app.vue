@@ -1,6 +1,6 @@
 <template lang="pug">
   .devtools-panel
-    nav.devtools-nav
+    nav.devtools-nav.native-bar
       router-link(:to='{name: "logs"}') Logs
       router-link(:to='{name: "abi-playground"}') ABI Explorer
       router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
@@ -29,6 +29,15 @@ body {
   color: #5A5A5A;
   font-family: Arial, Helvetica, sans-serif;
 }
+.native-bar {
+  background: #F3F3F3;
+  border-bottom: 1px solid #D0D0D0;
+  color: #5A5A5A;
+  font-size: 12px;
+  line-height: 26px;
+  height: 26px;
+}
+
 
 .devtools-panel {
   padding: 0;
@@ -38,15 +47,11 @@ body {
     z-index:2;
     top: 0px;
     width: 100%;
-    background: #F3F3F3;
-    border-bottom: 1px solid #D0D0D0;
+
     a {
       display: inline-block;
-      color: #5A5A5A;
+      color: inherit;
       text-decoration: none;
-      font-size: 12px;
-      line-height: 26px;
-      height: 26px;
       padding: 0 14px;
       position: relative;
       &:hover {

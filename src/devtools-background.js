@@ -36,8 +36,7 @@ function createPanel() {
 
 chrome.runtime.onMessage.addListener((payload) => {
   // console.log('devtools bg msg', payload);
-  // console.log('createpanel?', payload.web3log);
-  if (!payload.web3log) return;
+  if (!payload.w3dt_action) return;
   if (!panelEnabled) createPanel();
 });
 
