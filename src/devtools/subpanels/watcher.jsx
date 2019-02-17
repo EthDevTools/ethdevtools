@@ -15,7 +15,7 @@ class Watcher extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.startWatching = this.startWatching.bind(this);
-    this.stopWatching = this.stopWatching.bind(this);
+    this.doneWatching = this.doneWatching.bind(this);
   }
 
   handleChange(event) {
@@ -40,13 +40,12 @@ class Watcher extends Component {
     }
   }
 
-  stopWatching(event) {
+  doneWatching(event) {
     this.setState({ watching: false, contractAddress: '' });
   }
 
   render() {
     console.log(this.props.contracts)
-
     return <div>
       {!this.state.watching && <span>Select Address to watch:</span>}
       {!this.state.watching && <select disabled={this.state.watching} value={this.state.selectedAddress} onChange={this.handleChange}>
@@ -64,10 +63,7 @@ class Watcher extends Component {
           Start Watching
         </button>}
       </span>}
-      {this.state.watching && <button onClick={this.stopWatching}>
-        Stop Watching
-      </button>}
-      {this.state.contractAddress && <WatchAddress address={this.state.contractAddress} />}
+      {this.state.contractAddress && <WatchAddress doneWatching={this.doneWatching} address={this.state.contractAddress} />}
     </div>;
   }
 }
