@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import WatchAddress from './watch-address.jsx';
 
-class Explorer extends Component {
+class Watcher extends Component {
   constructor(props, context) {
     super(props);
     this.state = {
@@ -72,4 +72,4 @@ class Explorer extends Component {
   }
 }
 
-export default Explorer;
+export default Watcher;

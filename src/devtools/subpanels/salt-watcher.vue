@@ -1,6 +1,6 @@
 <template lang="pug">
-.salt-explorer
-  .explorer-div
+.salt-watcher
+  .watcher-div
 
 </template>
 
@@ -8,7 +8,7 @@
 import { mapGetters } from 'vuex';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Explorer from './explorer.jsx';
+import Watcher from './watcher.jsx';
 
 export default {
   data: () => ({
@@ -18,16 +18,16 @@ export default {
   },
   created() { },
   mounted() {
-    const explorer = React.createElement(Explorer, { contracts: this.contracts }, null);
-    const explorerDiv = document.getElementsByClassName('explorer-div')[0];
-    ReactDOM.render(explorer, explorerDiv);
+    const watcher = React.createElement(Watcher, { contracts: this.contracts }, null);
+    const watcherDiv = document.getElementsByClassName('watcher-div')[0];
+    ReactDOM.render(watcher, watcherDiv);
   },
   methods: { },
 };
 </script>
 
 <style lang="less">
-.salt-explorer {
+.salt-watcher {
 
 }
 </style>
