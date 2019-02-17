@@ -1,23 +1,23 @@
 <template>
   <div >
       <div class="flex">
-        <div class="col name">Name</div>
+        <div class="col name">Name3</div>
         <div class="col time">Time</div>
         <div class="col grow-1 mx2">Parameters</div>
         <div class="col grow-1 mx2">Returns</div>
       </div>
-      <template v-for="(log, i) in logs">
-        <div :key="i">{{i}} - {{log}}</div>
-        <!-- <log
+      <template v-for="(log, i) in sends">
+        <!-- <div :key="i">{{i}} - {{log}}</div> -->
+        <log
         :i="i"
-        :logs="logs"
+        :logs="sends"
         :results="results"
         :isRepeat="repeat"
         :key="log.id"
         :log="log"
         :result="results[log.id]"
         :nextIsRepeat="repeat(i + 1)"
-        v-if="!repeat(i)" /> -->
+        v-if="!repeat(i) && hasResult(i)" />
       </template>
   </div>
 </template>
@@ -29,17 +29,20 @@ import Log from './Log';
   export default {
     name: 'Logs',
     computed: {
-      ...mapState('logs', 'results'),
-    },
-    mounted() {
-      console.log('logs from state', this.logs);
-      console.log('results from state', this.results);
+      ...mapState(['sends', 'results']),
     },
     methods: {
+      hasResult(i) {
+        const send = this.sends[i];
+        console.log({ send });
+        const result = this.results[send.id];
+        console.log({ result });
+        return !!result;
+      },
       repeat(i) {
-        const curr = this.logs[i];
+        const curr = this.sends[i];
         if (!curr) return false;
-        const prev = this.logs.length >= i ? this.logs[i - 1] : null;
+        const prev = this.sends.length >= i ? this.sends[i - 1] : null;
 
         if (!prev) return false;
         return prev.method === curr.method

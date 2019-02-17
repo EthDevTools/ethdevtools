@@ -9,7 +9,7 @@ export default new Vuex.Store({
   state: {
     logs: {}, // will be keyed by ID,
     sends: [],
-    responses: {},
+    results: {},
     contracts: {},
   },
   getters: {
@@ -18,7 +18,13 @@ export default new Vuex.Store({
   },
   mutations: {
     ADD_MESSAGE_LOG: (state, payload) => {
-      console.log('ADD_MESSAGE_LOG');
+      console.log('ADD_MESSAGE_LOG', { payload });
+      if (payload.message === 'web3 detected!') {
+        Vue.set(state, 'logs', {});
+        Vue.set(state, 'sends', []);
+        Vue.set(state, 'results', {});
+        Vue.set(state, 'contracts', {});
+      }
       Vue.set(state.logs, `message|${+new Date()}`, {
         at: new Date(),
         type: 'message',
@@ -36,8 +42,7 @@ export default new Vuex.Store({
       logMessage.args = payload.args;
       logMessage.method = payload.method;
 
-      state.sends.unshift(logMessage);
-      console.log('sends length', state.sends.length);
+      state.sends.push(logMessage);
       Vue.set(state.logs, `send|${payload.id}`, logMessage);
     },
     UPDATE_SEND_RESPONSE: (state, payload) => {
@@ -46,10 +51,6 @@ export default new Vuex.Store({
       const { args } = state.sends.find((s) => s.id === payload.id);
       const method = args[0];
       const processLogResult = processResult[method] || processResult.default;
-      console.log('sends', state.sends);
-      console.log('args', args);
-      console.log('args[0]', args[0]);
-      console.log('method', method);
       const logResult = processLogResult(args, payload.results, method, state.contracts);
       logResult.id = payload.id;
       logResult.time = +new Date();
@@ -60,7 +61,6 @@ export default new Vuex.Store({
     },
     ADD_CONTRACT: (state, payload) => {
       console.log('ADD_CONTRACT', { payload });
-      // payload has { address, abi }
       Vue.set(state.contracts, payload.address.toLowerCase(), payload);
       Vue.set(state.logs, `contract|${payload.address}`, {
         at: new Date(),

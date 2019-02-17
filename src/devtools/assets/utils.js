@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
-import web3ABI from 'web3-eth-abi';
+import { AbiCoder } from 'web3-eth-abi';
+
+const abiCoder = new AbiCoder();
 
 const abiDecoder = require('abi-decoder');
 
@@ -99,8 +101,8 @@ export const processResult = {
     console.log({ method });
     if (method) {
       console.log('method', method);
-      console.log(web3ABI);
-      params = web3ABI.decodeParameters(method.outputs, results.join(''));
+      console.log(abiCoder);
+      params = abiCoder.decodeParameters(method.outputs, results.join(''));
       console.log(results);
     }
     console.log({ method }, { params });
