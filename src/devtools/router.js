@@ -5,7 +5,7 @@ import Router from 'vue-router';
 import LogsViewer from './subpanels/logs-viewer';
 import ABIPlayground from './subpanels/abi-playground';
 import GraphExplorer from './subpanels/graph-explorer';
-import SaltExplorer from './subpanels/salt-explorer';
+import SaltWatcher from './subpanels/salt-watcher';
 
 Vue.use(Router);
 
@@ -19,7 +19,7 @@ const router = new Router({
     { path: '/logs', name: 'logs', component: LogsViewer },
     { path: '/abi-playground', name: 'abi-playground', component: ABIPlayground },
     { path: '/graph-explorer', name: 'graph-explorer', component: GraphExplorer },
-    { path: '/salt-explorer', name: 'salt-explorer', component: SaltExplorer },
+    { path: '/salt-watcher', name: 'salt-watcher', component: SaltWatcher },
   ],
 });
 
