@@ -64,18 +64,10 @@ const store = new Vuex.Store({
       }
     },
     ADD_MESSAGE_LOG: (state, payload) => {
-      console.log('ADD_MESSAGE_LOG', { payload });
-      if (payload.message === 'web3 detected!') {
-        Vue.set(state, 'logs', {});
-        Vue.set(state, 'sends', []);
-        Vue.set(state, 'results', {});
-        Vue.set(state, 'contracts', {});
-        Vue.set(state, 'accounts', {});
-      }
       Vue.set(state.logs, `message|${+new Date()}`, {
-        at: new Date(),
+        time: +new Date(),
         type: 'message',
-        label: payload.message,
+        message: payload.message,
       });
     },
     // ADD_SEND_LOG: (state, payload) => {
@@ -115,9 +107,9 @@ const store = new Vuex.Store({
       console.log('ADD_CONTRACT', { payload });
       Vue.set(state.contracts, payload.address.toLowerCase(), payload);
       Vue.set(state.logs, `contract|${payload.address}`, {
-        at: new Date(),
-        payload,
-        label: `CONTRACT ADDED - ${payload.address}`,
+        time: +new Date(),
+        type: 'contract',
+        address: payload.address,
       });
       AbiDecoder.addABI(payload.abi);
     },

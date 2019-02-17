@@ -12,6 +12,14 @@
       json(v-if='paramsData' deep :data='paramsData')
     .col.returns.m1
       json(v-if='resultData' deep :data='resultData')
+  template(v-else-if='log.type === "message"')
+    .col.name MESSAGE
+    .col.time {{ log.time | logtime }}
+    .col.m1.details {{ log.message }}
+  template(v-else-if='log.type === "contract"')
+    .col.name CONTRACT LOADED
+    .col.time {{ log.time | logtime }}
+    .col.m1.details Address:&nbsp;{{ log.address }}
 
 </template>
 
@@ -66,6 +74,9 @@ export default {
     flex-grow: 1;
     word-wrap: break-word;         /* All browsers since IE 5.5+ */
     overflow-wrap: break-word;
+  }
+  .details {
+    flex-grow: 1;
   }
   .response-time {
     color: #AAA;
