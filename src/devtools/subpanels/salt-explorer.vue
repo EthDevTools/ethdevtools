@@ -1,19 +1,27 @@
 <template lang="pug">
 .salt-explorer
-  h1 Salt Explorer
+  .explorer-div
 
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Explorer from './explorer.jsx';
 
 export default {
   data: () => ({
   }),
   computed: {
+    ...mapGetters(['contracts']),
   },
   created() { },
-  mounted() { },
+  mounted() {
+    const explorer = React.createElement(Explorer, { contracts: this.contracts }, null);
+    const explorerDiv = document.getElementsByClassName('explorer-div')[0];
+    ReactDOM.render(explorer, explorerDiv);
+  },
   methods: { },
 };
 </script>

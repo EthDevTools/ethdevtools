@@ -4,7 +4,7 @@
       router-link(:to='{name: "logs"}') Logs
       router-link(:to='{name: "abi-playground"}') ABI Explorer
       router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
-      router-link(:to='{name: "salt-explorer"}') Address Events
+      router-link(:to='{name: "salt-explorer"}') Watcher
     router-view
 </template>
 <script>
