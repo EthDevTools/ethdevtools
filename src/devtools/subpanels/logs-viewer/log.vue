@@ -4,14 +4,14 @@
     .col.name
       | {{ log.method }}
       span.repeat-count(v-if='log.count > 1') {{ log.count }}
-      span(v-if='log.callName') {{ log.callName }}
+      div(v-if='log.callName') {{ log.callName }}
     .col.time
       | {{ log.time | logtime }}
       .response-time(v-if='resultDelay') result +{{resultDelay}}ms
     .col.params.m1
-      json(v-if='log.annotatedParams' deep :data='log.annotatedParams')
+      json(v-if='paramsData' deep :data='paramsData')
     .col.returns.m1
-      json(v-if='log.result' deep :data='log.result')
+      json(v-if='resultData' deep :data='resultData')
 
 </template>
 
@@ -36,6 +36,19 @@ export default {
       if (!this.log.result) return null;
       return this.log.resultTime - this.log.time;
     },
+
+    paramsData() {
+      if (!this.log.contractAddress && !this.log.annotatedParams) return null;
+      return {
+        to: this.log.contractAddress,
+        params: this.log.annotatedParams,
+      };
+    },
+    resultData() {
+      return this.log.annotatedResult;
+    },
+
+
     repeatTimes() {
       if (!this.nextIsRepeat) return [];
       let repeats = [];
@@ -100,6 +113,14 @@ export default {
     border-radius: 50%;
     color: white;
     background: #AAA;
+  }
+  .vjs__tree {
+    font-size: 9px;
+    line-height: 1.2em;
+    padding: 3px;
+    .vjs__tree {
+      padding: 0;
+    }
   }
 }
 </style>

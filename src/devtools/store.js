@@ -7,6 +7,8 @@ import Vuex from 'vuex';
 import { AbiCoder } from 'web3-eth-abi';
 import AbiDecoder from 'abi-decoder';
 
+window.AbiDecoder = AbiDecoder;
+
 const abiCoder = new AbiCoder();
 
 Vue.use(Vuex);
@@ -36,8 +38,12 @@ const store = new Vuex.Store({
       // payload.data.params
       if (data.result) {
         data.resultTime = +new Date();
+        const req = state.logs[`req|${data.id}`];
+        const annotatedResult = getAnnotatedResult(req, data.result);
         Vue.set(state.logs[`req|${data.id}`], 'result', data.result);
+        Vue.set(state.logs[`req|${data.id}`], 'annotatedResult', annotatedResult);
         Vue.set(state.logs[`req|${data.id}`], 'resultTime', +new Date());
+
         state.sends.push(data.result);
       } else {
         data.type = 'send';
@@ -122,12 +128,11 @@ function annotateParams(data) {
   if (['eth_accounts', 'net_version', 'eth_gasPrice'].includes(method)) {
     data.annotatedParams = null;
   } else if (method === 'eth_getTransactionReceipt') {
-    data.annotatedParams = params[1][0];
+    data.annotatedParams = params[0];
   } else if (['eth_call', 'eth_sendTransaction'].includes(method)) {
-    // need .slice(0,10) ?
     const contractAddress = params[0].to;
-    const methodSig = params[0].data;
-    const gasPrice = params[0].gasPrice;
+    const methodSig = params[0].data.slice(0, 10);
+    const gasPrice = (params[0].gasPrice || '').slice(0, 10);
 
     data.contractAddress = contractAddress;
     const contract = store.state.contracts[contractAddress];
@@ -144,6 +149,38 @@ function annotateParams(data) {
   } else {
     console.log(`UNKNOWN METHOD -- ${method}`);
   }
+}
+function getAnnotatedResult(req, result) {
+  const { method, params } = req;
+  if (method === 'eth_gasPrice') {
+    const cost = new BigNumber(result, 16);
+    return {
+      wei: cost.toString(10),
+      eth: cost.div(1e18).toString(10),
+      original: cost.div(1e18).toString(16),
+    };
+  }
+  if (method === 'eth_sendTransaction') return { tx: result };
+  if (method === 'eth_call') {
+    const contract = store.state.contracts[req.contractAddress];
+    if (contract) {
+      const abis = AbiDecoder.getABIs();
+      const methodSig = req.params[0].data.slice(0, 10);
+      console.log({ methodSig });
+      const abiMethod = _.find(abis, { signature: methodSig });
+      console.log({ abiMethod });
+      if (abiMethod) {
+        console.log(abiCoder);
+        const decodedResult = abiCoder.decodeParameters(abiMethod.outputs, result);
+        console.log(decodedResult);
+        return decodedResult;
+      }
+    }
+  }
+  if (method === 'eth_getTransactionReceipt') {
+
+  }
+  return result;
 }
 
 export default store;

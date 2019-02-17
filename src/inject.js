@@ -6,12 +6,12 @@
 // import Web3 from 'web3';
 // this just passes along the messages to our extension
 window.addEventListener('message', (e) => {
-  // console.log(e);
-
+  console.log(e);
+  if (e.source !== window) return;
   try {
     // messages coming from metamask
     if (e.data.data.name === 'provider') {
-      console.log(e.data.data.data);
+      console.log('>METAMASKMESSAGE', e.data.data.data);
       chrome.runtime.sendMessage({
         w3dt_action: 'metamask-message',
         data: e.data.data.data,
@@ -21,7 +21,7 @@ window.addEventListener('message', (e) => {
     // just allow easier nested gets
   }
 
-  if (e.source !== window) return;
+
   if (e.data.w3dt_action) {
     console.log(`> ${e.data.w3dt_action}`, e.data);
     chrome.runtime.sendMessage(e.data);
