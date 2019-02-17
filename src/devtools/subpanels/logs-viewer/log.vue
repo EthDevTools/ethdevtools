@@ -1,13 +1,15 @@
 <template lang='pug'>
 .log.flex
-  .col
-    | {{ log.time | logtime }} {{ resultDelay }}
-    span(v-if='resultDelay') (result +{{resultDelay}}ms)
   template(v-if='log.type === "send"')
-    .col {{ log.method }}
-    .col
+    .col.name
+      | {{ log.method }}
+      span.repeat-count(v-if='log.count > 1') {{ log.count }}
+    .col.time
+      | {{ log.time | logtime }}
+      .response-time(v-if='resultDelay') result +{{resultDelay}}ms
+    .col.params.m1
       json(v-if='log.params' deep :data='log.params')
-    .col
+    .col.returns.m1
       json(v-if='log.result' deep :data='log.result')
 
 </template>
@@ -70,24 +72,33 @@ export default {
 </script>
 
 
-<style>
+<style lang='less'>
 .log {
   padding: 5px;
   border-bottom: 1px solid #EEE;
-}
-
-
-.repeat {
-
-}
-.wide {
-  flex-grow: 1;
-}
-.params, .returns {
-  background-color: #eeeeee;
-  border-radius: 5px;
-  flex-grow: 1;
-   word-wrap: break-word;         /* All browsers since IE 5.5+ */
-  overflow-wrap: break-word;
+  .params, .returns {
+    background-color: #eeeeee;
+    border-radius: 5px;
+    flex-grow: 1;
+    word-wrap: break-word;         /* All browsers since IE 5.5+ */
+    overflow-wrap: break-word;
+  }
+  .response-time {
+    color: #AAA;
+    font-style: italic;
+  }
+  .repeat-count {
+    font-size: 10px;
+    display: inline-block;
+    margin-left: 8px;
+    height: 18px;
+    width: 18px;
+    line-height: 18px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 50%;
+    color: white;
+    background: #AAA;
+  }
 }
 </style>

@@ -5,6 +5,8 @@ import { processMethod, processResult } from './assets/utils';
 
 Vue.use(Vuex);
 
+const EQ_PARAMS = ['method', 'params', 'result'];
+
 export default new Vuex.Store({
   state: {
     logs: {}, // will be keyed by ID,
@@ -15,20 +17,42 @@ export default new Vuex.Store({
   getters: {
     logs: (state) => _.orderBy(_.values(state.logs), 'time'),
     contracts: (state) => _.values(state.contracts),
+    condensedLogs: (state, getters) => {
+      const clogs = [];
+      let lastLog;
+      _.each(getters.logs, (log) => {
+        if (
+          lastLog
+          && log.method === lastLog.method
+          && JSON.stringify(log.params) === JSON.stringify(lastLog.params)
+          && JSON.stringify(log.results) === JSON.stringify(lastLog.results)
+        ) {
+          lastLog.count++;
+        } else {
+          const newLog = _.cloneDeep(log);
+          newLog.count = 1;
+          clogs.push(newLog);
+          lastLog = newLog;
+        }
+      });
+      return clogs;
+    },
   },
   mutations: {
     METAMASK_MESSAGE: (state, { data }) => {
       // payload.data.id
       // payload.data.method
       // payload.data.params
-      data.type = 'send';
-      data.time = +new Date();
-
       if (data.result) {
         data.resultTime = +new Date();
         Vue.set(state.logs[`req|${data.id}`], 'result', data.result);
+        Vue.set(state.logs[`req|${data.id}`], 'resultTime', +new Date());
         state.sends.push(data.result);
       } else {
+        data.type = 'send';
+        data.time = +new Date();
+
+
         Vue.set(state.logs, `req|${data.id}`, data);
 
         // const processLogMessage = processMethod[data.method] || processMethod.default;
