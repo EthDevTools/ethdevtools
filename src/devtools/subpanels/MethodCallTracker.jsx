@@ -41,7 +41,8 @@ class MethodCallTracker extends Component {
     this.setState({ result: JSON.stringify(payload.result) });
   }
 
-  handleSubmit() {
+  handleSubmit(e) {
+    console.log(e)
     window.explorerUpdate = this.explorerUpdate.bind(this);
     const contractAddress = this.props.contractAddress;
     const methodName = this.props.ABIMethod.name;

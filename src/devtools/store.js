@@ -164,13 +164,9 @@ function getAnnotatedResult(req, result) {
     if (contract) {
       const abis = AbiDecoder.getABIs();
       const methodSig = req.params[0].data.slice(0, 10);
-      console.log({ methodSig });
       const abiMethod = _.find(abis, { signature: methodSig });
-      console.log({ abiMethod });
       if (abiMethod) {
-        console.log(abiCoder);
         const decodedResult = abiCoder.decodeParameters(abiMethod.outputs, result);
-        console.log(decodedResult);
         return decodedResult;
       }
     }

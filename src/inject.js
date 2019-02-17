@@ -89,7 +89,7 @@ function injectedScript(win) {
       const originalContract = new _OriginalContract(...args);
       const contractEntry = {};
       console.log({ originalContract });
-      const address = originalContract.address || originalContract._address;
+      const address = args[1] || originalContract.address || originalContract._address;
       contractEntry[address] = originalContract;
       Object.assign(window.originalContracts, contractEntry);
       emitW3dtAction('contract', {
