@@ -11,10 +11,12 @@ export default new Vuex.Store({
     sends: [],
     results: {},
     contracts: {},
+    accounts: {},
   },
   getters: {
     logs: (state) => _.orderBy(_.values(state.logs), 'at'),
     contracts: (state) => _.values(state.contracts),
+    accounts: (state) => state.accounts,
   },
   mutations: {
     ADD_MESSAGE_LOG: (state, payload) => {
@@ -24,6 +26,7 @@ export default new Vuex.Store({
         Vue.set(state, 'sends', []);
         Vue.set(state, 'results', {});
         Vue.set(state, 'contracts', {});
+        Vue.set(state, 'accounts', {});
       }
       Vue.set(state.logs, `message|${+new Date()}`, {
         at: new Date(),
@@ -58,6 +61,10 @@ export default new Vuex.Store({
 
       Vue.set(state.results, logResult.id, logResult);
       Vue.set(state.logs[`send|${payload.id}`], 'response', payload.response);
+
+      if (args[0] === 'eth_accounts') {
+        Vue.set(state.accounts, 'accounts', logResult.params);
+      }
     },
     ADD_CONTRACT: (state, payload) => {
       console.log('ADD_CONTRACT', { payload });

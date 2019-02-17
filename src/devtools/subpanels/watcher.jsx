@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import WatchAddress from './watch-address.jsx';
+import { toChecksumAddress } from 'web3-utils';
 
 class Watcher extends Component {
   constructor(props, context) {
@@ -45,11 +46,17 @@ class Watcher extends Component {
   }
 
   render() {
-    console.log(this.props.contracts)
+    const addressChosen = (this.state.selectedAddress && this.state.selectedAddress !== 'custom') || (
+      this.state.selectedAddress === 'custom' && this.state.addressInput
+    );
     return <div>
       {!this.state.watching && <span>Select Address to watch:</span>}
       {!this.state.watching && <select disabled={this.state.watching} value={this.state.selectedAddress} onChange={this.handleChange}>
         <option disabled value=''>Select an address</option>
+        {this.props.accounts.map((account, index) => <option key={toChecksumAddress(account)}
+        value={toChecksumAddress(account)}>
+          {toChecksumAddress(account)}
+        </option>)}
         {this.props.contracts.map((contract, index) => <option key={contract.address} value={contract.address}>
           {contract.address}
         </option>)}
@@ -59,10 +66,10 @@ class Watcher extends Component {
       {!this.state.watching && this.state.custom && <span>
         Enter contract address:
         <input disabled={this.state.watching} type="text" value={this.state.addressInput} onChange={this.handleInputChange} />
-        {!this.state.watching && this.state.selectedAddress && this.state.addressInput && <button onClick={this.startWatching}>
-          Start Watching
-        </button>}
       </span>}
+      {!this.state.watching && addressChosen && <button onClick={this.startWatching}>
+        Start Watching
+      </button>}
       {this.state.contractAddress && <WatchAddress doneWatching={this.doneWatching} address={this.state.contractAddress} />}
     </div>;
   }

@@ -9146,7 +9146,7 @@ web3-shh@1.0.0-beta.46:
     web3-providers "1.0.0-beta.46"
     web3-utils "1.0.0-beta.46"
 
-web3-utils@1.0.0-beta.46:
+web3-utils@1.0.0-beta.46, web3-utils@^1.0.0-beta.46:
   version "1.0.0-beta.46"
   resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.46.tgz#9984dda27c9079b129e741cbb63b665ae0f9725c"
   integrity sha512-mSz+NrAil2fDZkxTXHPntCclZ8DofMjv8Q+BYR0VAyzTzylpYNXAV0WDdxBp/sXgniWRZXZMF7OkQNWqhZ1J9g==
