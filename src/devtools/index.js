@@ -35,6 +35,9 @@ function processEvent(payload) {
     store.commit('ADD_MESSAGE_LOG', payload);
   } else if (payload.w3dt_action === 'metamask-message') {
     store.commit('METAMASK_MESSAGE', payload);
+  } else if (payload.w3dt_action === 'explorer-result') {
+    console.log('GOT EXPLORER RESULT');
+    window.explorerUpdate(payload);
   }
 }
 

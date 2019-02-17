@@ -79,6 +79,7 @@ const store = new Vuex.Store({
     // ADD_SEND_LOG: (state, payload) => {
     //   console.log('ADD_SEND', { payload });
 
+
     //   const processLogMessage = processMethod[payload.method] || processMethod.default;
     //   const logMessage = processLogMessage(payload.args, payload.method, state.contracts);
     //   logMessage.method = payload.method;

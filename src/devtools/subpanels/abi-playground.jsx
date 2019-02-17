@@ -19,16 +19,20 @@ class ABIPlayGround extends Component {
   render() {
     console.log(this.props.contracts)
     const selectedContract = this.props.contracts[this.state.selectedContractIndex];
-    return <div>
-      Select Contract to Play With:
-      <select value={this.state.selectedContractIndex} onChange={this.handleChange}>
-        <option disabled value=''>Select a Contract</option>
-        {this.props.contracts.map((contract, index) => <option key={contract.address} value={index}>
-          {contract.address}
-        </option>)}
-      </select>
-
-      {selectedContract && <FullContract contract={selectedContract} />}
+    return <div className="native-bar">
+      <div>
+        <div className="select-style">
+          <select value={this.state.selectedContractIndex} onChange={this.handleChange}>
+            <option disabled value=''>Select a Contract to Interact with</option>
+            {this.props.contracts.map((contract, index) => <option key={contract.address} value={index}>
+              {contract.address}
+            </option>)}
+          </select>
+        </div>
+        <div className="custom-graph">
+          {selectedContract && <FullContract contract={selectedContract} />}
+        </div>
+      </div>
     </div>;
   }
 }

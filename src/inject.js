@@ -31,13 +31,13 @@ window.addEventListener('message', (e) => {
 // This is the code that actually gets injected into our page
 // and has access to the window / web3 global
 function injectedScript(win) {
-  console.log('injected script');
   function emitW3dtAction(action, details) {
     win.postMessage({
       w3dt_action: action,
       ...typeof details === 'string' ? { message: details } : details,
     }, '*');
   }
+  window.emitW3dtAction = emitW3dtAction;
 
   function attemptPatchWeb3() {
     const globalEthereum = win.ethereum;
@@ -58,6 +58,7 @@ function injectedScript(win) {
     // console.log(localWeb3);
     console.log({ currentProvider });
     currentProvider = globalWeb3.currentProvider;
+
 
     // const _originalSend = currentProvider.send;
 
@@ -83,12 +84,17 @@ function injectedScript(win) {
     // globalWeb3.setProvider(currentProvider);
 
     const _OriginalContract = globalWeb3.eth.Contract;
+    window.originalContracts = {};
     globalWeb3.eth.Contract = function (...args) {
+      const originalContract = new _OriginalContract(...args);
+      const contractEntry = {};
+      contractEntry[originalContract.address] = originalContract;
+      Object.assign(window.originalContracts, contractEntry);
       emitW3dtAction('contract', {
         address: args[1],
         abi: args[0],
       });
-      return new _OriginalContract(...args);
+      return originalContract;
     };
   }
 

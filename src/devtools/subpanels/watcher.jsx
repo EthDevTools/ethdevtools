@@ -50,26 +50,27 @@ class Watcher extends Component {
       this.state.selectedAddress === 'custom' && this.state.addressInput
     );
     return <div>
-      {!this.state.watching && <span>Select Address to watch:</span>}
-      {!this.state.watching && <select disabled={this.state.watching} value={this.state.selectedAddress} onChange={this.handleChange}>
-        <option disabled value=''>Select an address</option>
-        {this.props.accounts.map((account, index) => <option key={toChecksumAddress(account)}
-        value={toChecksumAddress(account)}>
-          {toChecksumAddress(account)}
-        </option>)}
-        {this.props.contracts.map((contract, index) => <option key={contract.address} value={contract.address}>
-          {contract.address}
-        </option>)}
-        <option value='custom'>Enter custom address</option>
-      </select>}
+      <div className="select-style"></div>
+        {!this.state.watching && <select disabled={this.state.watching} value={this.state.selectedAddress} onChange={this.handleChange}>
+          <option disabled value=''>Select an address</option>
+          {this.props.accounts.map((account, index) => <option key={toChecksumAddress(account)}
+          value={toChecksumAddress(account)}>
+            {toChecksumAddress(account)}
+          </option>)}
+          {this.props.contracts.map((contract, index) => <option key={contract.address} value={contract.address}>
+            {contract.address}
+          </option>)}
+          <option value='custom'>Enter custom address</option>
+        </select>}
+      </div>
+      {!this.state.watching && this.state.custom && <div class="custom-graph">
+        Address:
 
-      {!this.state.watching && this.state.custom && <span>
-        Enter contract address:
         <input disabled={this.state.watching} type="text" value={this.state.addressInput} onChange={this.handleInputChange} />
-      </span>}
-      {!this.state.watching && addressChosen && <button onClick={this.startWatching}>
-        Start Watching
-      </button>}
+        {!this.state.watching && addressChosen && <button onClick={this.startWatching}>
+          Start Watching
+        </button>}
+      </div>}
       {this.state.contractAddress && <WatchAddress doneWatching={this.doneWatching} address={this.state.contractAddress} />}
     </div>;
   }
