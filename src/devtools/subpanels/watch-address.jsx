@@ -39,13 +39,8 @@ class WatchAddress extends Component {
     const address = this.props.address;
     this.socket = new WebSocket(`ws://serene-waters-65951.herokuapp.com/socket/addressActivity/${address}`);
     this.socket.onmessage = (event) => {
-      console.log("New socket message received");
-      console.log(event.data);
-      console.log("Coercing");
       const newMessage = JSON.parse(event.data);
-      console.log(newMessage);
       const messages = this.state.messages.concat(newMessage);
-      console.log("added to state, resetting state");
       this.setState({ messages });
     };
     this.socket.onopen = (event) => {

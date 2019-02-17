@@ -9,9 +9,6 @@ class MessageTable extends Component {
   }
 
   render() {
-    console.log("rerendering message table");
-    console.log(this.props.messages);
-    console.log("rerendering message table continue");
     return <div class='message-table'>
       <div class="flex">
         <div class="col amount mx2">Amount</div>
