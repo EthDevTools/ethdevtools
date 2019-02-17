@@ -24,6 +24,10 @@ Vue.filter('datetime', (value) => {
   if (!value) return '---';
   return formatDate(value, 'YYYY-MM-DD @ h:mma');
 });
+Vue.filter('logtime', (value) => {
+  if (!value) return '---';
+  return formatDate(value, 'HH:mm:ss.SSS');
+});
 Vue.filter('timeago', (value) => {
   if (!value) return '---';
   if (_.isDate(value)) return ago(value);

@@ -13,10 +13,34 @@ export default new Vuex.Store({
     contracts: {},
   },
   getters: {
-    logs: (state) => _.orderBy(_.values(state.logs), 'at'),
+    logs: (state) => _.orderBy(_.values(state.logs), 'time'),
     contracts: (state) => _.values(state.contracts),
   },
   mutations: {
+    METAMASK_MESSAGE: (state, { data }) => {
+      // payload.data.id
+      // payload.data.method
+      // payload.data.params
+      data.type = 'send';
+      data.time = +new Date();
+
+      if (data.result) {
+        data.resultTime = +new Date();
+        Vue.set(state.logs[`req|${data.id}`], 'result', data.result);
+        state.sends.push(data.result);
+      } else {
+        Vue.set(state.logs, `req|${data.id}`, data);
+
+        // const processLogMessage = processMethod[data.method] || processMethod.default;
+        // const logMessage = processLogMessage(data.params, data.method, state.contracts);
+        // logMessage.method = data.method;
+        // logMessage.id = data.id;
+        // logMessage.time = +new Date();
+        // logMessage.args = data.params;
+        // state.sends.push(logMessage);
+        // Vue.set(state.logs, `send|${data.id}`, logMessage);
+      }
+    },
     ADD_MESSAGE_LOG: (state, payload) => {
       console.log('ADD_MESSAGE_LOG', { payload });
       if (payload.message === 'web3 detected!') {

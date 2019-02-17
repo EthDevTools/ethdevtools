@@ -2,10 +2,10 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ChromeReloadPlugin  = require('wcer');
+// const ChromeReloadPlugin  = require('wcer');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -30,6 +30,7 @@ module.exports = {
     // devtools
     devtoolsbg: resolve('./devtools-background'),
     devtools: resolve('./devtools'),
+    // inject: resolve('./inject'),
   },
   output: {
     path: path.join(__dirname, '..', 'dist'),
