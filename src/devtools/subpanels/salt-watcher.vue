@@ -1,6 +1,6 @@
 <template lang="pug">
 .salt-watcher
-  .watcher-div
+  .watcher-div.native-bar
 
 </template>
 
@@ -27,7 +27,9 @@ export default {
 </script>
 
 <style lang="less">
-.salt-watcher {
-
+.watcher-div{
+  span {
+    margin: 0px 10px;
+  }
 }
 </style>

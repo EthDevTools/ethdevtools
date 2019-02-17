@@ -72,16 +72,16 @@ export default new Vuex.Store({
     ADD_SEND_LOG: (state, payload) => {
       console.log('ADD_SEND', { payload });
 
-      const processLogMessage = processMethod[payload.method] || processMethod.default;
-      const logMessage = processLogMessage(payload.args, payload.method, state.contracts);
-      logMessage.method = payload.method;
-      logMessage.id = payload.id;
-      logMessage.time = +new Date();
-      logMessage.args = payload.args;
-      logMessage.method = payload.method;
+      // const processLogMessage = processMethod[payload.method] || processMethod.default;
+      // const logMessage = processLogMessage(payload.args, payload.method, state.contracts);
+      // logMessage.method = payload.method;
+      // logMessage.id = payload.id;
+      // logMessage.time = +new Date();
+      // logMessage.args = payload.args;
+      // logMessage.method = payload.method;
 
-      state.sends.unshift(logMessage);
-      Vue.set(state.logs, `send|${payload.id}`, logMessage);
+      // state.sends.unshift(logMessage);
+      // Vue.set(state.logs, `send|${payload.id}`, logMessage);
     },
     UPDATE_SEND_RESPONSE: (state, payload) => {
       console.log('ADD_SEND_RESPONSE', { payload });

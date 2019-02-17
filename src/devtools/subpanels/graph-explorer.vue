@@ -20,9 +20,10 @@
           option(value='livepeer') Livepeer
         optgroup(label='Custom')
           option(value='custom') Use Custom URL
-    span(v-if='graphQLDropdown==="custom"') Enter GraphQL Endpoint URL:
-    input(v-if='graphQLDropdown==="custom"' v-model='graphQLCustom')
-    button(v-if='graphQLDropdown==="custom"' @click='goCustom') Load!
+    .custom-graph(v-if="graphQLDropdown==='custom'")
+      span Enter GraphQL Endpoint URL:
+      input(v-model='graphQLCustom')
+      button(@click='goCustom') Load!
   .graphIQL
 </template>
 
@@ -99,29 +100,29 @@ html, body, .devtools-panel {
 }
 
 .select-style {
-     border: 1px solid #ccc;
     display: inline-block;
     border-radius: 0;
     overflow: hidden;
     position: relative;
-    height: 38px;
     margin-bottom: -3px;
     width: 250px;
-    &:after {
+    &:before {
       content: '▾';
       position: absolute;
       padding: 0 10px;
-      right: 0px;
+      left: 0;
       top: 50%;
-      margin-top: -7px;
-      z-index: -1;
+      margin-top: -13px;
+      z-index: 0;
     }
 }
 
 .select-style select {
-    padding: 10px 12px;
+    padding: 7px 25px;
     display: inline-block;
     border: none;
+    position: relative;
+    z-index: 1;
     width: 130%;
     box-shadow: none;
     background: transparent;
@@ -131,5 +132,14 @@ html, body, .devtools-panel {
 
 .select-style select:focus {
     outline: none;
+}
+
+.custom-graph {
+  display: inline-block;
+  overflow: hidden;
+  margin-bottom: -3px;
+  input {
+    margin: 0px 10px;
+  }
 }
 </style>
