@@ -36,7 +36,7 @@ const store = new Vuex.Store({
       // payload.data.id
       // payload.data.method
       // payload.data.params
-      if (data.result) {
+      if (data.result !== undefined) { // can be null!
         data.resultTime = +new Date();
         const req = state.logs[`req|${data.id}`];
         const annotatedResult = getAnnotatedResult(req, data.result);
@@ -64,18 +64,10 @@ const store = new Vuex.Store({
       }
     },
     ADD_MESSAGE_LOG: (state, payload) => {
-      console.log('ADD_MESSAGE_LOG', { payload });
-      if (payload.message === 'web3 detected!') {
-        Vue.set(state, 'logs', {});
-        Vue.set(state, 'sends', []);
-        Vue.set(state, 'results', {});
-        Vue.set(state, 'contracts', {});
-        Vue.set(state, 'accounts', {});
-      }
       Vue.set(state.logs, `message|${+new Date()}`, {
-        at: new Date(),
+        time: +new Date(),
         type: 'message',
-        label: payload.message,
+        message: payload.message,
       });
     },
     // ADD_SEND_LOG: (state, payload) => {
@@ -115,9 +107,9 @@ const store = new Vuex.Store({
       console.log('ADD_CONTRACT', { payload });
       Vue.set(state.contracts, payload.address.toLowerCase(), payload);
       Vue.set(state.logs, `contract|${payload.address}`, {
-        at: new Date(),
-        payload,
-        label: `CONTRACT ADDED - ${payload.address}`,
+        time: +new Date(),
+        type: 'contract',
+        address: payload.address,
       });
       AbiDecoder.addABI(payload.abi);
     },
@@ -148,7 +140,6 @@ function annotateParams(data) {
       data.callName = methodSig;
       data.annotatedParams = methodSig;
     }
-    console.log(data);
   } else {
     console.log(`UNKNOWN METHOD -- ${method}`);
   }
@@ -185,7 +176,12 @@ function getAnnotatedResult(req, result) {
     }
   }
   if (method === 'eth_getTransactionReceipt') {
-
+    if (result && result.logs) {
+      console.log('HAS RESULT!');
+      const annotatedResult = _.cloneDeep(result);
+      annotatedResult.decodedLogs = AbiDecoder.decodeLogs(result.logs);
+      return annotatedResult;
+    }
   }
   return result;
 }
