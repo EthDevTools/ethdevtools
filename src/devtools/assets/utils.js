@@ -13,6 +13,7 @@ export const processMethod = {
   }),
   eth_call: (args, _, contracts) => {
     console.log('eth_call');
+    console.log(args);
     const contractAddress = `${args[1][0].to.toLowerCase()}`;
     const methodSig = args[1][0].data.slice(0, 10);
 

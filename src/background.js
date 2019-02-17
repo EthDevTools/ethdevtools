@@ -1,4 +1,5 @@
 const tabs = {};
+window.tabs = tabs;
 
 chrome.runtime.onMessage.addListener((payload, sender, sendResponse) => {
   console.log('background msg listener!', payload, sender);

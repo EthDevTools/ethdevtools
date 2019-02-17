@@ -14,11 +14,11 @@ export default {
   data: () => ({
   }),
   computed: {
-    ...mapGetters(['contracts']),
+    ...mapGetters(['contracts', 'accounts']),
   },
   created() { },
   mounted() {
-    const watcher = React.createElement(Watcher, { contracts: this.contracts }, null);
+    const watcher = React.createElement(Watcher, { contracts: this.contracts, accounts: this.accounts.accounts || [] }, null);
     const watcherDiv = document.getElementsByClassName('watcher-div')[0];
     ReactDOM.render(watcher, watcherDiv);
   },

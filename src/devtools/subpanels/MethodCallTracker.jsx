@@ -4,6 +4,8 @@ class MethodCallTracker extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   displayValue(value) {
@@ -26,21 +28,36 @@ class MethodCallTracker extends Component {
     }
   }
 
-  // handleInputChange = (event) => {
-  //   this.setState({ [event.target.name]: event.target.value });
-  // }
-  //
-  // handleSubmit = _ => {
-  // }
+  handleInputChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  handleSubmit() {
+    if(this.props.constant) {
+      // this.props.method.cacheCall(...Object.values(this.state));
+    }
+    else {
+      // this.props.method.cacheSend(...Object.values(this.state));
+    }
+  }
 
   render() {
     const ABIMethod = this.props.ABIMethod;
-    // const contract = this.props.contract;
     const methodName = ABIMethod.name;
-    // const method = contract[methodName];
-
+    console.log('ABIMethod')
+    console.log(ABIMethod)
     return <div key={methodName}>
-      {methodName}
+    <span>{methodName}: </span>
+      <span>{ABIMethod.inputs.map((input, index) => {
+        const inputType = this.translateType(input.type);
+        const inputLabel = input.name;
+        //TODO: check if input type is struct and if so loop out struct fields as well
+        return <input key={input.name} type={inputType}
+          onChange={this.handleInputChange}
+          name={input.name}
+          placeholder={inputLabel} />;
+      })}</span>
+      <button onClick={this.handleSubmit}>{this.props.constant? 'Call' : 'Send'}</button>
     </div>;
   }
 
