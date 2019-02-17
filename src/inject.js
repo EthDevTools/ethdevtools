@@ -85,11 +85,11 @@ function injectedScript(win) {
     const _OriginalContract = globalWeb3.eth.Contract;
     window.originalContracts = {};
     globalWeb3.eth.Contract = function (...args) {
-      console.log('NEW CONTRACT');
       const originalContract = new _OriginalContract(...args);
       const contractEntry = {};
+
       console.log({ originalContract });
-      const address = args[1] || originalContract.address || originalContract._address;
+      const address = arguments[1] || originalContract.address || originalContract._address;
       contractEntry[address] = originalContract;
       Object.assign(window.originalContracts, contractEntry);
       emitW3dtAction('contract', {
