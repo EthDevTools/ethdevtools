@@ -49,13 +49,13 @@ class MethodCallTracker extends Component {
     console.log({ params });
     if(this.props.constant) {
       const evalText = `window.originalContracts['${contractAddress}'].methods.${methodName}(${params}).call().then(result => { window.emitW3dtAction('explorer-result', { result }) })`
-      this.setState({ result: '🔄' });
+      this.setState({ result: ' 🔄 ' });
       console.log({evalText});
       chrome.devtools.inspectedWindow.eval(evalText);
     }
     else {
       const evalText = `web3.eth.getAccounts().then(accounts => { window.originalContracts['${contractAddress}'].methods.${methodName}(${params}).send({ from: accounts[0] }).then(result => { window.emitW3dtAction('explorer-result', { result }) }) })`
-      this.setState({ result: '🔄' });
+      this.setState({ result: ' 🔄 ' });
       console.log({evalText});
       chrome.devtools.inspectedWindow.eval(evalText);
     }
