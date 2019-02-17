@@ -43,7 +43,9 @@ const store = new Vuex.Store({
         Vue.set(state.logs[`req|${data.id}`], 'result', data.result);
         Vue.set(state.logs[`req|${data.id}`], 'annotatedResult', annotatedResult);
         Vue.set(state.logs[`req|${data.id}`], 'resultTime', +new Date());
-
+        if (req.method === 'eth_accounts') {
+          state.accounts = data.result;
+        }
         state.sends.push(data.result);
       } else {
         data.type = 'send';
