@@ -136,6 +136,17 @@ function annotateParams(data) {
       decodedInput = AbiDecoder.decodeMethod(methodSig);
       data.callName = `${decodedInput.name}(${decodedInput.params.map((p) => p.type).join(',')})`;
       data.annotatedParams = decodedInput.params.length ? decodedInput.params : null;
+
+      if (data.annotatedParams) {
+        const abis = AbiDecoder.getABIs();
+        const abiMethod = _.find(abis, { signature: methodSig });
+        const decoded = abiCoder.decodeParameters(abiMethod.outputs, params[0].data.slice(10));
+        _.each(decoded, (val, key) => {
+          if (data.annotatedParams[key]) {
+            data.annotatedParams[key].value = val;
+          }
+        });
+      }
     } else {
       data.callName = methodSig;
       data.annotatedParams = methodSig;

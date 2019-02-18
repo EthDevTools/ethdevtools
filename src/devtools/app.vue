@@ -3,8 +3,8 @@
     nav.devtools-nav.native-bar
       a(href="https://github.com/theoephraim/ethdevtools/" target="_blank") ⚒ Eth Dev Tools ⚒
       router-link(:to='{name: "logs"}') Logs
-      router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
       router-link(:to='{name: "abi-playground"}') ABI Explorer
+      router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
       router-link(:to='{name: "salt-watcher"}') Watcher
     router-view
 </template>

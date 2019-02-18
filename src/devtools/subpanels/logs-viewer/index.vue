@@ -26,7 +26,7 @@
     .col.grow-1.mx2 Params
     .col.grow-1.mx2 Result
   .logs
-    log(v-for='log in condensedLogs' :log='log')
+    log(v-for='log in condensedLogs' :log='log' :key="log.time + log.type")
   //- logs
 </template>
 
@@ -39,7 +39,7 @@ export default {
   data: () => ({
     groupSimilar: true,
     hideEthAccounts: false,
-    hideNetVersion: false,
+    hideNetVersion: true,
     hideEthGetBalance: false,
   }),
   computed: {

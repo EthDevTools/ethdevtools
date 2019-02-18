@@ -9,9 +9,9 @@
       | {{ log.time | logtime }}
       .response-time(v-if='resultDelay') result +{{resultDelay}}ms
     .col.params.m1
-      json(v-if='paramsData' deep :data='paramsData')
+      json(v-if='paramsData' :deep="deep" :data='paramsData')
     .col.returns.m1
-      json(v-if='resultData' deep :data='resultData')
+      json(v-if='resultData' :deep="deep" :data='resultData')
   template(v-else-if='log.type === "message"')
     .col.name MESSAGE
     .col.time {{ log.time | logtime }}
@@ -33,8 +33,9 @@ export default {
   },
   data() {
     return {
-      deep: 0,
       showExtraTimes: false,
+      deep: 1,
+
     };
   },
   methods: {

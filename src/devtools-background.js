@@ -18,7 +18,7 @@ let mainPanel;
 function createPanel() {
   panelEnabled = true;
   chrome.devtools.panels.create(
-    'ETHDevTools', 'icons/128.png', 'pages/devtools.html',
+    'web3', 'icons/128.png', 'pages/devtools.html',
     (panel) => {
       mainPanel = panel;
       // panel.onShown.addListener(() => {
