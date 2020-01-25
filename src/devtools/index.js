@@ -11,6 +11,7 @@ window.store = store;
 const router = require('./router').default;
 
 chrome.runtime.onMessage.addListener((payload, sender) => {
+  console.log('index.js - chrome.runtime.onMessage.addListener');
   // filter out any messages coming from other tabs
   if (!payload.w3dt_action) return;
   // if (_.get(sender, 'tab.id') !== chrome.devtools.inspectedWindow.tabId) return;
@@ -18,7 +19,7 @@ chrome.runtime.onMessage.addListener((payload, sender) => {
 });
 
 function processEvent(payload) {
-  // console.log('processEvent', payload);
+  console.log('processEvent', payload);
   // filter out any messages coming from other tabs
   if (!payload.w3dt_action) return;
   if (payload.w3dt_action === 'page-reload') {

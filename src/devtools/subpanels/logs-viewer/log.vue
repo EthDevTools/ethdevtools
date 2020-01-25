@@ -53,6 +53,7 @@ export default {
       if (this.log.method === 'eth_getTransactionReceipt') {
         return { tx: this.log.params[0] };
       }
+      return null;
     },
     resultData() {
       return this.log.annotatedResult;

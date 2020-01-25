@@ -3,18 +3,18 @@
 
 /* eslint-disable no-param-reassign, no-underscore-dangle, prefer-destructuring */
 
-// import Web3 from 'web3';
 // this just passes along the messages to our extension
 window.addEventListener('message', (e) => {
   if (e.source !== window) return;
   try {
     // messages coming from metamask
+    // commented out as patch method is attemptped
     if (e.data.data.name === 'provider') {
       // console.log('>METAMASKMESSAGE', e.data.data.data);
-      chrome.runtime.sendMessage({
-        w3dt_action: 'metamask-message',
-        data: e.data.data.data,
-      });
+      // chrome.runtime.sendMessage({
+      //   w3dt_action: 'metamask-message',
+      //   data: e.data.data.data,
+      // });
     }
   } catch (err) {
     // just allow easier nested gets
@@ -24,6 +24,7 @@ window.addEventListener('message', (e) => {
     chrome.runtime.sendMessage(e.data);
   }
 });
+
 chrome.runtime.sendMessage({
   w3dt_action: 'page-reload',
 });
@@ -33,84 +34,92 @@ chrome.runtime.sendMessage({
 // and has access to the window / web3 global
 function injectedScript(win) {
   function emitW3dtAction(action, details) {
-    win.postMessage({
+    let data = {
       w3dt_action: action,
       ...typeof details === 'string' ? { message: details } : details,
-    }, '*');
+    }
+    win.postMessage(data, '*');
+    // maybe should just post directly to chrome.runtime?
+    // requires app id to send from browser (passing via window skips this?)
+    // chrome.runtime.sendMessage(data);
   }
   window.emitW3dtAction = emitW3dtAction;
 
   function attemptPatchWeb3() {
-    const globalEthereum = win.ethereum;
-    const globalWeb3 = win.web3;
-    let currentProvider;
+    console.log('inject.js - attemptPatchWeb3')
+    // const globalEthereum = win.ethereum;
+    // const globalWeb3 = win.web3;
 
     if (win.ethereum) {
       console.log('+ ethereum global found');
       emitW3dtAction('message', 'ethereum global found!');
-      // currentProvider = win.ethereum;
     } else {
       emitW3dtAction('message', 'ethereum global NOT found!');
       return;
     }
-    // const localWeb3 = new win.Web3(globalWeb3.currentProvider);
-    console.log(globalEthereum);
-    console.log(globalWeb3);
-    // console.log(localWeb3);
+    
+    let currentProvider = win.ethereum || win.web3.currentProvider;
     console.log({ currentProvider });
-    currentProvider = globalWeb3.currentProvider;
+    let override = {
+      get: function( target, key, context ) {
 
+        if ((key === 'sendAsync' || key === 'send')) {
+          console.log({target})
+          console.log({key})
+          console.log({context})
+          const _originalSend = target[key]
 
-    // const _originalSend = currentProvider.send;
+          const newSend = function (...args) {
 
-    // currentProvider.send = function (...args) {
-    //   const requestId = Math.floor(Math.random() * 1000000);
-    //   emitW3dtAction('send', {
-    //     id: requestId,
-    //     method: args[0],
-    //     foo: 'bar',
-    //     args,
+            console.log('newSend')
+            const requestId = Math.floor(Math.random() * 1000000);
+
+            // when it's sent as an object an error occurs
+            emitW3dtAction(key, JSON.stringify({
+              id: requestId,
+              method: args[0],
+              foo: 'bar',
+              args,
+            }));
+            return _originalSend(...args)
+          };
+          return newSend
+        }
+        return target[key]
+      }
+    }
+
+    win.web3.currentProvider = win.ethereum = new Proxy(currentProvider, override)
+
+    // was this doing anything?
+    // vvvvvvv
+
+    // const _OriginalContract = globalWeb3.eth.Contract;
+    // window.originalContracts = {};
+    // globalWeb3.eth.Contract = function (...args) {
+    //   const originalContract = new _OriginalContract(...args);
+    //   const contractEntry = {};
+
+    //   console.log({ originalContract });
+    //   const address = arguments[1] || originalContract.address || originalContract._address;
+    //   contractEntry[address] = originalContract;
+    //   Object.assign(window.originalContracts, contractEntry);
+    //   emitW3dtAction('contract', {
+    //     address: args[1],
+    //     abi: args[0],
     //   });
-    //   const prom = _originalSend.apply(currentProvider, args);
-    //   prom.then((...results) => {
-    //     emitW3dtAction('send-response', {
-    //       id: requestId,
-    //       results,
-    //     });
-    //   });
-    //   return prom;
+    //   return originalContract;
     // };
-
-    // globalWeb3.setProvider('');
-    // globalWeb3.setProvider(currentProvider);
-
-    const _OriginalContract = globalWeb3.eth.Contract;
-    window.originalContracts = {};
-    globalWeb3.eth.Contract = function (...args) {
-      const originalContract = new _OriginalContract(...args);
-      const contractEntry = {};
-
-      console.log({ originalContract });
-      const address = arguments[1] || originalContract.address || originalContract._address;
-      contractEntry[address] = originalContract;
-      Object.assign(window.originalContracts, contractEntry);
-      emitW3dtAction('contract', {
-        address: args[1],
-        abi: args[0],
-      });
-      return originalContract;
-    };
   }
 
   console.log('+ injected patch script');
-  // setInterval(attemptPatchWeb3, 1000);
   attemptPatchWeb3();
 }
 
 
 // inject the web3 patch
 function installScript(fn) {
-  console.log('injecting script');
+  console.log('inject.js - installScript()');
   const source = `;(${fn.toString()})(window)`;
 
   const script = document.createElement('script');

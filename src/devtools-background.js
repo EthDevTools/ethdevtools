@@ -16,6 +16,7 @@ let mainPanel;
 
 
 function createPanel() {
+  console.log('devtools-background.js - createPanel()');
   panelEnabled = true;
   chrome.devtools.panels.create(
     'web3', 'icons/128.png', 'pages/devtools.html',
@@ -35,6 +36,7 @@ function createPanel() {
 }
 
 chrome.runtime.onMessage.addListener((payload) => {
+  console.log('devtools-background.js - chrome.runtime.onMessage.addListener((payload) => {})');
   // console.log('devtools bg msg', payload);
   if (!payload.w3dt_action) return;
   if (!panelEnabled) createPanel();
@@ -44,5 +46,6 @@ chrome.runtime.onMessage.addListener((payload) => {
 chrome.runtime.sendMessage({
   w3dt_action: 'check-enabled', tabId: chrome.devtools.inspectedWindow.tabId,
 }, (enabled) => {
+  console.log('devtools-background.js - chrome.runtime.sendMessage(w3dt_action: check-enaled tab id:', chrome.devtools.inspectedWindow.tabId);
   if (enabled) createPanel();
 });
