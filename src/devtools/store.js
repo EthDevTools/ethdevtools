@@ -14,9 +14,14 @@ const abiCoder = new AbiCoder();
 Vue.use(Vuex);
 
 const EQ_PARAMS = ['method', 'params', 'result'];
+// const port = chrome.runtime.connect();
 
+window.addEventListener('message', (e) => {
+  console.log('store window listener heard', { e });
+});
 const store = new Vuex.Store({
   state: {
+    connected: false,
     logs: {}, // will be keyed by ID,
     sends: [],
     results: {},
@@ -29,6 +34,9 @@ const store = new Vuex.Store({
     accounts: (state) => state.accounts,
   },
   mutations: {
+    SET_CONNECTED: (state, connected) => {
+      state.connetes = connected;
+    },
     CLEAR_LOGS: (state) => {
       state.logs = {};
     },
@@ -114,7 +122,21 @@ const store = new Vuex.Store({
       AbiDecoder.addABI(payload.abi);
     },
   },
-  actions: {},
+  actions: {
+    connect() {
+      console.log('connect!');
+      const data = {
+        messageFromBackend: 'connect',
+      };
+      console.log({ data });
+      // port.postMessage('test-test');
+      console.log('worked?');
+
+      chrome.runtime.sendMessage({ connect: true }, (response) => {
+        console.log({ response });
+      });
+    },
+  },
 });
 
 

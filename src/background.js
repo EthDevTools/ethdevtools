@@ -5,7 +5,10 @@ chrome.runtime.onMessage.addListener((payload, sender, sendResponse) => {
   console.log('background msg listener!', payload, sender);
 
   const action = payload.w3dt_action;
-  if (!action) return;
+  if (!action) {
+    console.log('unknown payload', { payload });
+    return;
+  }
 
   const tabId = sender.tab ? sender.tab.id : payload.tabId;
   if (!tabId) return;
@@ -19,6 +22,8 @@ chrome.runtime.onMessage.addListener((payload, sender, sendResponse) => {
     return;
   } else if (action === 'fetch-events-history') {
     sendResponse(tabs[tabId].history);
+  } else {
+    console.log('unknown action', action);
   }
 
   // enable popup if not enabled already

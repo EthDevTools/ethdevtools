@@ -5,7 +5,11 @@
 
 // this just passes along the messages to our extension
 window.addEventListener('message', (e) => {
-  if (e.source !== window) return;
+  console.log('front end window heard message')
+  if (e.source !== window) {
+    console.log('source is', e.source)
+    return
+  }
   try {
     // messages coming from metamask
     // commented out as patch method is attemptped
@@ -22,12 +26,26 @@ window.addEventListener('message', (e) => {
   if (e.data.w3dt_action) {
     console.log(`> ${e.data.w3dt_action}`, e.data);
     chrome.runtime.sendMessage(e.data);
+  } else if(e.data.messageFromBackend) {
+    console.log('heard', e.data)
+    attemptPatchWeb3()
+  } else {
+    console.log('heard', e.data)
   }
 });
 
 chrome.runtime.sendMessage({
   w3dt_action: 'page-reload',
 });
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.greeting == "hello")
+      sendResponse({farewell: "goodbye"});
+  });
 
 
 // This is the code that actually gets injected into our page
@@ -110,10 +128,11 @@ function injectedScript(win) {
     //   });
     //   return originalContract;
     // };
+    emitW3dtAction('connected', true)
   }
 
   console.log('+ injected patch script');
-  attemptPatchWeb3();
+  // attemptPatchWeb3();
 }
 
 

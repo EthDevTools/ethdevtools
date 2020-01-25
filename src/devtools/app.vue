@@ -6,20 +6,24 @@
       router-link(:to='{name: "abi-playground"}') ABI Explorer
       router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
       router-link(:to='{name: "salt-watcher"}') Watcher
-    router-view
+    router-view(v-if="connected")
+    template(v-else)
+      button(id="connect" @click.stop="connect") connect to web3
 </template>
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
 
   export default {
     data: () => ({
     }),
     computed: {
-      ...mapGetters(['logs']),
+      ...mapGetters(['logs', 'connected']),
     },
     created() { },
     mounted() { },
-    methods: { },
+    methods: {
+      ...mapActions(['connect']),
+    },
   };
 </script>
 
@@ -37,6 +41,12 @@ body {
   font-size: 12px;
   line-height: 26px;
   height: 26px;
+}
+
+#connect {
+  margin:auto;
+  display:block;
+  margin-top:50px;
 }
 
 

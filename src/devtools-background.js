@@ -37,7 +37,14 @@ function createPanel() {
 
 chrome.runtime.onMessage.addListener((payload) => {
   console.log('devtools-background.js - chrome.runtime.onMessage.addListener((payload) => {})');
-  // console.log('devtools bg msg', payload);
+  console.log('devtools bg msg', payload);
+  if (payload.connect) {
+    console.log('post window msg from devtools-background.js');
+    const data = { type: 'FROM_BACK', text: 'Hello from the backend!' };
+    chrome.runtime.sendMessage(data);
+    window.postMessage(data, '*');
+    return 'told em!';
+  }
   if (!payload.w3dt_action) return;
   if (!panelEnabled) createPanel();
 });

@@ -41,6 +41,9 @@ function processEvent(payload) {
   } else if (payload.w3dt_action === 'explorer-result') {
     console.log('GOT EXPLORER RESULT');
     window.explorerUpdate(payload);
+  } else if (payload.w3dt_action === 'connected') {
+    console.log('CONNECTED', { payload });
+    store.commit('SET_CONNECTED', payload);
   }
 }
 
