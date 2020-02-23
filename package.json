@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "abi-decoder": "^1.2.0",
-    "axios": "^0.17.1",
+    "axios": "^0.18.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "bignumber.js": "^8.0.2",
