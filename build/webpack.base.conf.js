@@ -1,43 +1,42 @@
-'use strict'
 const path = require('path');
+const _ = require('lodash');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackTemplate = require('html-webpack-template');
 const { VueLoaderPlugin } = require('vue-loader');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-// const ChromeReloadPlugin  = require('wcer');
+const GenerateJsonFromJsPlugin = require('generate-json-from-js-webpack-plugin');
+
+const { publicEnv } = require('../config/env');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const htmlPage = (title, filename, chunks, template) => new HtmlWebpackPlugin({
-  title,
-  hash: true,
-  cache: true,
-  inject: 'body',
-  filename: './pages/' + filename + '.html',
-  // template: template || path.resolve(__dirname, './page.ejs'),
-  appMountId: 'app',
-  chunks
-});
+function resolveSrc(more = '') {
+  return path.join(__dirname, '..', 'src', more);
+}
 
-let resolve = dir => path.join(__dirname, '..', 'src', dir)
 module.exports = {
-  mode: isDevelopment ? 'development' : 'production',
-  context: path.resolve(__dirname, '../'),
+  mode: 'development',
+  context: resolveSrc(),
   entry: {
-    popup: resolve('./popup'),
-    background: resolve('./background'),
+    background: resolveSrc('background'),
+    popup: resolveSrc('popup'),
+    options: resolveSrc('options'),
+
+    // inject into page
+    injector: resolveSrc('injector'),
+    injected: resolveSrc('injected'),
+
     // devtools
-    devtoolsbg: resolve('./devtools-background'),
-    devtools: resolve('./devtools'),
-    // inject: resolve('./inject'),
+    devtools: resolveSrc('devtools'),
+    'devtools-panel': resolveSrc('devtools-panel'),
   },
   output: {
     path: path.join(__dirname, '..', 'dist'),
     publicPath: '/',
     filename: 'js/[name].js',
-    chunkFilename: 'js/[id].[name].js?[hash]',
-    library: '[name]'
+    // chunkFilename: 'js/[id].[name].js?[hash]',
+    // library: '[name]'
     // path: path.resolve(__dirname, '../dist'),
     // filename: '[name].js',
     // publicPath: '/',
@@ -47,7 +46,7 @@ module.exports = {
     extensions: ['.js', '.vue', '.json', '.mjs'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': path.resolve(__dirname, '../src'),
+      '@': resolveSrc(),
     },
   },
   module: {
@@ -60,25 +59,6 @@ module.exports = {
           { loader: 'css-loader', options: { sourceMap: isDevelopment } },
           { loader: 'postcss-loader' },
         ],
-      },
-      {
-        test: /\.mjs$/,
-        include: /node_modules/,
-        type: "javascript/auto",
-      },
-      {
-        test: /\.jsx$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
-      },
-      {
-        test: /\.flow/,
-        include: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
       },
       {
         test: /\.less$/,
@@ -102,9 +82,9 @@ module.exports = {
           { loader: 'sass-resources-loader',
             options: {
               resources: [
-                path.resolve(__dirname, '../src/style/_variables.less'),
-                path.resolve(__dirname, '../src/style/_colors.less'),
-                path.resolve(__dirname, '../src/style/_mixins.less'),
+                resolveSrc('/style/_variables.less'),
+                resolveSrc('/style/_colors.less'),
+                resolveSrc('/style/_mixins.less'),
               ],
             }
           },
@@ -121,7 +101,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: path.resolve(__dirname, '../src'),
+        include: resolveSrc(),
       },
       {
         test: /\.(png|jpe?g|gif)(\?.*)?$/,
@@ -166,23 +146,36 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    // new webpack.DefinePlugin({'process.env': publicEnv}),
-    htmlPage('home', 'app', ['tab']),
-    htmlPage('popup', 'popup', ['popup']),
-    htmlPage('devtools', 'devtools', ['devtools']),
-    htmlPage('devtoolsbg', 'devtoolsbg', ['devtoolsbg']),
-    htmlPage('options', 'options', ['options']),
-    htmlPage('background', 'background', ['background']),
+    new webpack.DefinePlugin({'process.env': publicEnv}),
+
+    // generate an html page for each entrypoint that is not just a script
+    ..._.map({
+      'devtools-panel': ['devtools-panel'],
+      'devtools': ['devtools'],
+      'popup': ['popup'],
+      'options': ['options'],
+      'newtab': ['newtab'],
+    }, (chunks, filename) => new HtmlWebpackPlugin({
+      inject: false,
+      template: HtmlWebpackTemplate,
+      appMountId: 'app',
+
+      title: filename,
+      cache: true,
+      filename: `./${filename}.html`,
+      chunks
+    })),
+
+    // create manifest.json from a js file
+    // so we can add comments, not worry about quotes/commas, generate dynamically
+    new GenerateJsonFromJsPlugin({
+      path: resolveSrc('manifest.js'),
+      filename: 'manifest.json',
+    }),
+
     new CopyWebpackPlugin([
+      // copy all static files - used for icons/images/etc
       { from: path.join(__dirname, '..', 'static') },
-      {
-        from: path.join(__dirname, '..', 'src', 'manifest.json' ),
-      },
-      // getting webpack errors if inject is a proper entry point
-      {
-        from: path.join(__dirname, '..', 'src', 'inject.js' ),
-        to: 'js',
-      },
     ]),
   ],
 };

@@ -3,28 +3,26 @@
     nav.devtools-nav.native-bar
       a(href="https://github.com/theoephraim/ethdevtools/" target="_blank") ⚒ Eth Dev Tools ⚒
       router-link(:to='{name: "logs"}') Logs
-      router-link(:to='{name: "abi-playground"}') ABI Explorer
-      router-link(:to='{name: "graph-explorer"}') GraphQL Explorers
-      router-link(:to='{name: "salt-watcher"}') Watcher
-    router-view(v-if="connected")
-    template(v-else)
-      button(id="connect" @click.stop="connect") connect to web3
+      router-link(:to='{name: "contracts"}') Contracts
+    router-view
+    //- template(v-else)
+    //-   button(id="connect" @click.stop="connect") connect to web3
 </template>
-<script>
-  import { mapGetters, mapActions } from 'vuex';
 
-  export default {
-    data: () => ({
-    }),
-    computed: {
-      ...mapGetters(['logs', 'connected']),
-    },
-    created() { },
-    mounted() { },
-    methods: {
-      ...mapActions(['connect']),
-    },
-  };
+<script>
+import { mapGetters, mapActions } from 'vuex';
+
+export default {
+  data: () => ({
+  }),
+  computed: {
+    ...mapGetters(['logs']),
+  },
+  created() { },
+  mounted() { },
+  methods: {
+  },
+};
 </script>
 
 <style lang="less">
@@ -33,6 +31,8 @@ body {
   padding: 0;
   color: #5A5A5A;
   font-family: Arial, Helvetica, sans-serif;
+
+  background: #F3F3F3;
 }
 .native-bar {
   background: #F3F3F3;

@@ -4,7 +4,6 @@ import Vue from 'vue';
 
 import _ from 'lodash';
 import formatDate from 'date-fns/format';
-import ago from 's-ago';
 
 
 // return up to 2 decimals
@@ -27,11 +26,6 @@ Vue.filter('datetime', (value) => {
 Vue.filter('logtime', (value) => {
   if (!value) return '---';
   return formatDate(value, 'HH:mm:ss.SSS');
-});
-Vue.filter('timeago', (value) => {
-  if (!value) return '---';
-  if (_.isDate(value)) return ago(value);
-  return ago(new Date(value));
 });
 
 Vue.filter('capitalize', (value) => {

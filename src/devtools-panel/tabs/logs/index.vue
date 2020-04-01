@@ -26,16 +26,23 @@
     .col.grow-1.mx2 Params
     .col.grow-1.mx2 Result
   .logs
-    log(v-for='log in condensedLogs' :log='log' :key="log.time + log.type")
+    single-log(v-for='log in condensedLogs' :log='log' :key="`${log.requestId}+${log.time}`")
   //- logs
 </template>
 
 <script>
 import _ from 'lodash';
 import { mapGetters } from 'vuex';
-import SingleLog from './log.vue';
+
+import { broadcastMessage } from '@/lib/message-passing';
 
 export default {
+  components: {
+    'single-log': require('./single-log').default,
+  },
+  metaInfo: {
+    title: 'Web3 Logs', // page title - will be visible on tab!
+  },
   data: () => ({
     groupSimilar: true,
     hideEthAccounts: false,
@@ -77,9 +84,6 @@ export default {
     clearLogs() {
       this.$store.commit('CLEAR_LOGS');
     },
-  },
-  components: {
-    log: SingleLog,
   },
 };
 </script>

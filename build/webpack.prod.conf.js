@@ -1,25 +1,16 @@
-'use strict'
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const BUILD_PATH = path.resolve(__dirname, '../dist');
 
 const prodWebpackConfig = merge(baseWebpackConfig, {
-  devtool: '#cheap-module-eval-source-map',
+  mode: 'production',
+  devtool: 'cheap-module-eval-source-map',
   optimization: {
-    minimizer: [
-      // uglify is default and built-in, but currently having issues
-      new TerserPlugin({
-        sourceMap: true, // for sentry error handling
-      }),
-      new OptimizeCssAssetsPlugin({}),
-    ],
     splitChunks: {
       chunks: 'async',
       minSize: 30000,

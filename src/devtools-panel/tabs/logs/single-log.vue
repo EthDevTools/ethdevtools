@@ -1,6 +1,6 @@
 <template lang='pug'>
 .log.flex
-  template(v-if='log.type === "send"')
+  template(v-if='log.action === "send"')
     .col.name
       | {{ log.method }}
       span.repeat-count(v-if='log.count > 1') {{ log.count }}
@@ -28,6 +28,9 @@ import { format, differenceInMilliseconds } from 'date-fns';
 import VueJsonPretty from 'vue-json-pretty';
 
 export default {
+  components: {
+    json: VueJsonPretty,
+  },
   props: {
     log: {},
   },
@@ -38,8 +41,6 @@ export default {
 
     };
   },
-  methods: {
-  },
   computed: {
     resultDelay() {
       if (!this.log.result) return null;
@@ -48,7 +49,7 @@ export default {
 
     paramsData() {
       if (['eth_call', 'eth_sendTransaction'].includes(this.log.method)) {
-        return { to: this.log.contractAddress, params: this.log.annotatedParams };
+        return { params: this.log.params };
       }
       if (this.log.method === 'eth_getTransactionReceipt') {
         return { tx: this.log.params[0] };
@@ -56,11 +57,10 @@ export default {
       return null;
     },
     resultData() {
-      return this.log.annotatedResult;
+      return this.log.annotatedResult || this.log.result;
     },
   },
-  components: {
-    json: VueJsonPretty,
+  methods: {
   },
 };
 </script>

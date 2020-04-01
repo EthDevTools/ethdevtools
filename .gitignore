@@ -1,9 +1,10 @@
 .DS_Store
 config/local.js
 node_modules/
-/dist/
-/design
+/dist
 npm-debug.log*
+*.log
 /.vscode
+design/
 TODO
-src/secrets.json
+
