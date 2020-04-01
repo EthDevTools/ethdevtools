@@ -56,7 +56,7 @@ body {
   .devtools-nav {
     position: sticky;
     z-index:2;
-    top: 0px;
+    top: 0;
     width: 100%;
     background: #F3F3F3;
     border-bottom: 1px solid #D0D0D0;
@@ -101,13 +101,13 @@ body {
   width:25%;
 }
 .flex {
-   display: flex;
- }
- .mx2 {
-   margin-left: 2em;
-   margin-right: 2em;
- }
- .m1 {
-   margin:0em 1em 1em 0em;
- }
+  display: flex;
+}
+.mx2 {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+.m1 {
+  margin:0 1em 1em 0;
+}
 </style>

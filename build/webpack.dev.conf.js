@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const ExtensionReloader = require('webpack-extension-reloader');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 
 const baseWebpackConfig = require('./webpack.base.conf');
 
@@ -23,6 +24,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   },
   devtool: 'inline-source-map',
   plugins: [
+    new StyleLintPlugin({
+      fix: true,
+      files: ['**/*.{vue,htm,html,css,less}'],
+    }),
     new ExtensionReloader({
       reloadPage: true,
       entries: {

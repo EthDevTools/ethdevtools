@@ -101,11 +101,11 @@ export default {
   position: absolute;
   width: 100%;
   top: 27px;
-  bottom: 0px;
+  bottom: 0;
 
   .header {
     flex-grow: none;
-    padding:0px 5px;
+    padding:0 5px;
   }
   .logs {
     flex: 1 0 0;
