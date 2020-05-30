@@ -3,11 +3,7 @@
 // This script is injected into every page (can be configured in manifest)
 // it is responsible for injecting more scripts and handling communication back to the extension
 
-import _ from 'lodash';
-import { broadcastMessage } from '@/lib/message-passing';
-
 console.log('INJECTED SCRIPT!', window, chrome.runtime);
-
 
 // send an initial page loaded message (also fires on page reload)
 
@@ -29,21 +25,23 @@ console.log('INJECTED SCRIPT!', window, chrome.runtime);
 
 // broadcastMessage({ action: 'page_reload' });
 
-function attemptPatchWeb3() {
+function attemptProxyWeb3() {
   console.log('ATTEMPTING TO PATCH WEB3');
 
   let currentProvider;
   if (window.ethereum) {
-    console.log('found window.ethereum');
+    console.log('found window.ethereum', window.ethereum);
     currentProvider = window.ethereum;
   } else if (window.web3) {
-    console.log('found window.web3', window.web3.currentProvider);
+    console.log('found window.web3', window.web3);
+    console.log('found window.web3.currentProvider', window.web3.currentProvider);
     currentProvider = window.web3.currentProvider;
   } else {
     console.log('web3 not found :(');
     return;
   }
 
+  console.log('creating proxy');
   const devtoolsProxyProvider = new Proxy(currentProvider, {
     get(target, key, context) {
       console.log('DEVTOOLS PROXY GET', key);
@@ -109,6 +107,7 @@ function attemptPatchWeb3() {
       return target[key];
     },
     set(target, key, value, receiver) {
+      console.log('SET RUN');
       if (key === 'currentProvider') {
         console.log('PROXY - setting current provider');
       }
@@ -116,16 +115,54 @@ function attemptPatchWeb3() {
       return true;
     },
   });
-
-  // replace provider with our proxy
-  window.web3.currentProvider = devtoolsProxyProvider;
-  window.ethereum = devtoolsProxyProvider;
-  console.log('replaced web3 with our proxy');
+  window.devtoolsProxyProvider = devtoolsProxyProvider;
 }
 
+function attemptPatchWeb3() {
+  attemptProxyWeb3(window);
+  window.devtoolsProxyProvider = window.devtoolsProxyProvider;
 
-attemptPatchWeb3(window);
+  console.log('created proxy provider', window.devtoolsProxyProvider);
+  // replace provider with our proxy
+  console.log('replacing web3.currentProvider', window.web3.currentProvider);
+  window.web3.currentProvider = window.devtoolsProxyProvider;
+  console.log('replacing web3.ethereum', window.web3.ethereum);
+  window.ethereum = window.devtoolsProxyProvider;
+  console.log('replaced web3 with our proxy', window.web3.currentProvider, window.ethereum);
+}
 
-// setInterval(() => {
-//   console.log(`web 3 ? ${window.web3 ? 'found' : 'not found'}`);
-// }, 1000);
+attemptProxyWeb3();
+attemptPatchWeb3();
+
+// used to broadcast messages from any extension components
+// NOTE: This function is duplicated here rather than imported from message-passing.js because it fixes a bug on certain websites. No idea why :).
+async function broadcastMessage(payload) {
+  return new Promise((resolve, reject) => {
+    // if broadcasting from a webpage (not a content script, but one actually injected into the page)
+    // then we cannot use chrome.runtime.sendMessage, and must instead use window.postMessage
+    // to pass our message via the content script
+
+    const fullPayload = {
+      _msgSource: process.env.EXTENSION_MESSAGE_ID,
+      ...(typeof payload === 'string' ? { message: payload } : payload),
+    };
+
+    if (chrome.devtools) {
+      fullPayload._inspectedTabId = chrome.devtools.inspectedWindow.tabId;
+    }
+
+    // detect if we are in a webpage
+    if (!chrome.runtime.id) {
+    // pass the message via the window to our content script which will relay it
+      window.postMessage(JSON.stringify(fullPayload), window.origin);
+    } else {
+      console.log('> sending message from chrome.runtime.sendMessage', fullPayload);
+      chrome.runtime.sendMessage(process.env.EXTENSION_ID, fullPayload, (response) => {
+        console.log('< response from extension', response);
+        resolve(response);
+      });
+      // } else {
+      //   chrome.runtime.sendMessage(process.env.EXTENSION_ID, fullPayload);
+    }
+  });
+}
