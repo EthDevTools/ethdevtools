@@ -51,6 +51,8 @@ module.exports = {
   },
   module: {
     rules: [
+      // stops _ (lodash) from leaking into window scope
+      { parser: { amd: false } },
       {
         test: /\.css$/,
         use: [

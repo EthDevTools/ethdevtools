@@ -1,5 +1,6 @@
 .DS_Store
 config/local.js
+config/devkey.pem
 node_modules/
 /dist
 npm-debug.log*

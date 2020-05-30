@@ -14,7 +14,10 @@ const configsByEnv = {
 
     CHROME_STORAGE_ENGINE: 'local', // can switch to 'sync' - see lib/storage-helpers
     EXTENSION_MESSAGE_ID: 'ethdevtools', // to identify messages from our extension - see lib/message-passing
-    EXTENSION_ID: 'cepmncbifgdihlenkojjhclkdcifefka',
+
+    // the public key is based off a .pem file and will keep the id consistent
+    EXTENSION_ID: 'lbnmcceiaknbfcpjojdgceglaeaejngf',
+    EXTENSION_KEY: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkA2Vre4W36i9yVDIMQdE/a7TDEUHaDhShbSto4MyfptCcmejwJoRGk3rxWQQMzEPb23+M5P/ubqlvI/lWhoJKhDbp6jSe63ImdHFIlgUAEf30zLYoEjCyfMZGOh8+A71JchrLNL8PqhOeZn9vY0wqUBGic1co9XSZQ7aMNLcce+LJIEN6+RIyPSxiMafpRZsj/kLM9L2/XkKH7aiXFwDPm9YEuap/JKhVf9YQjfVRUPaUA3rnd73x54/redUTV4sTcAaEyPzM/qyS6mCnAExtPyPZ8IOdQaUwFfHCarobnPqX0nDzzHRCVixXF0H0UUk33H2fvM6N02HCW23iFrqTwIDAQAB'
   },
   development: {
   },

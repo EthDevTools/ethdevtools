@@ -7,9 +7,14 @@
 
 module.exports = {
   manifest_version: 2, // required
-  name: 'ETH Dev Tools', // Title in chrome store and extensions settings UI
-  version: '0.0.1',
 
+  ...process.env.NODE_ENV === 'production' ? {
+    name: 'ETH Dev Tools', // Title in chrome store and extensions settings UI
+  } : {
+    name: 'ETH Dev Tools (dev)',
+    key: process.env.EXTENSION_KEY,
+  },
+  version: '0.0.1',
   description: 'Developer tools panel for web3 developers',
   homepage_url: 'https://ethdevtools.xyz',
   icons: {

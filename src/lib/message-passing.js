@@ -1,6 +1,5 @@
-/* eslint-disable no-underscore-dangle */
-
-import _ from 'lodash';
+import _isString from 'lodash/isString';
+import _get from 'lodash/get';
 
 
 // used to broadcast messages from any extension components
@@ -12,7 +11,7 @@ export async function broadcastMessage(payload) {
 
     const fullPayload = {
       _msgSource: process.env.EXTENSION_MESSAGE_ID,
-      ..._.isString(payload) ? { message: payload } : payload,
+      ..._isString(payload) ? { message: payload } : payload,
     };
 
     if (chrome.devtools) {
@@ -21,16 +20,15 @@ export async function broadcastMessage(payload) {
 
     // detect if we are in a webpage
     if (!chrome.runtime.id) {
-    // pass the message via the window to our content script which will relay it
+      // console.log('> sending message from webpage', fullPayload, window.origin);
+      // pass the message via the window to our injector script which will relay it
       window.postMessage(JSON.stringify(fullPayload), window.origin);
     } else {
-      console.log('> sending message from chrome.runtime.sendMessage', fullPayload);
+      // console.log('> sending message from chrome.runtime.sendMessage', fullPayload);
       chrome.runtime.sendMessage(process.env.EXTENSION_ID, fullPayload, (response) => {
         console.log('< response from extension', response);
         resolve(response);
       });
-      // } else {
-      //   chrome.runtime.sendMessage(process.env.EXTENSION_ID, fullPayload);
     }
   });
 }
@@ -48,7 +46,7 @@ export function listenForMessagesFromTab(tabId, messageHandler) {
   chrome.runtime.onMessage.addListener((payload, sender, reply) => {
     // ignore messages that are not from our extension
     if (payload._msgSource !== process.env.EXTENSION_MESSAGE_ID) return;
-    if (_.get(sender, 'tab.id') !== tabId) return;
+    if (_get(sender, 'tab.id') !== tabId) return;
 
     messageHandler(payload, sender, reply);
   });
@@ -67,6 +65,7 @@ export function initializeWebpageMessageRelayer() {
     } catch (err) {
       return;
     }
+
     if (messageData._msgSource !== process.env.EXTENSION_MESSAGE_ID) return;
     chrome.runtime.sendMessage(process.env.EXTENSION_ID, messageData);
   });

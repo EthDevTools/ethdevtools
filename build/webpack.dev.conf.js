@@ -24,6 +24,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   },
   devtool: 'inline-source-map',
   plugins: [
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new StyleLintPlugin({
       fix: true,
       files: ['**/*.{vue,htm,html,css,less}'],

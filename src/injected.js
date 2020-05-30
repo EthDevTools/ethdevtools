@@ -1,32 +1,21 @@
-/* eslint-disable no-param-reassign, no-underscore-dangle, prefer-destructuring */
+/* eslint-disable no-param-reassign, prefer-destructuring */
 
-// This script is injected into every page (can be configured in manifest)
-// it is responsible for injecting more scripts and handling communication back to the extension
+/*
+  This script is injected into the page by injector.js
+  so that it is able to access the same global `window` object that the actual webpage does
 
-console.log('INJECTED SCRIPT!', window, chrome.runtime);
+  We set up a new web3 provider that just proxies to the real one but sends logging info
+  to our extension
+*/
 
-// send an initial page loaded message (also fires on page reload)
 
-// // handle messages via window
-// window.addEventListener('message', (e) => {
-//   // filter our noisy react dev tools messages
-//   if (e.data.source && e.data.source.includes('react')) return;
+// IMPORTANT NOTE - USE REQUIRE INSTEAD OF IMPORT!
+// have not been able to figure out why, but importing any file breaks the proxying setup
+// while using require does not...  ¯\_(ツ)_/¯
+const { broadcastMessage } = require('@/lib/message-passing');
 
-//   console.log(`👂 window message from ${e.source === window ? 'window' : e.source}`);
-//   console.log(e.data, e);
-// });
-
-// // handle messages from chrome runtime
-// chrome.runtime.onMessage.addListener((payload, sender, reply) => {
-//   console.log(`👂 chrome runtime message from ${sender.tab ? 'tab' : sender}`);
-//   console.log(payload);
-//   if (payload.ping) reply({ pong: true });
-// });
-
-// broadcastMessage({ action: 'page_reload' });
-
-function attemptProxyWeb3() {
-  console.log('ATTEMPTING TO PATCH WEB3');
+function createProxyProvider() {
+  console.log('INITIALIZING PROXY PROVIDER');
 
   let currentProvider;
   if (window.ethereum) {
@@ -41,8 +30,7 @@ function attemptProxyWeb3() {
     return;
   }
 
-  console.log('creating proxy');
-  const devtoolsProxyProvider = new Proxy(currentProvider, {
+  window.devtoolsProxyProvider = new Proxy(currentProvider, {
     get(target, key, context) {
       console.log('DEVTOOLS PROXY GET', key);
       if (key === 'enable') {
@@ -61,13 +49,6 @@ function attemptProxyWeb3() {
           console.log('!!! web3 send logged', args);
           broadcastMessage({ action: 'send', method: args[0], args });
 
-          // // when it's sent as an object an error occurs
-          // emitW3dtAction(key, JSON.stringify({
-          //   id: requestId,
-          //   method: args[0],
-          //   foo: 'bar',
-          //   args,
-          // }));
           const returnOfOriginalSend = _originalSend(...args);
           console.log(returnOfOriginalSend);
           return returnOfOriginalSend;
@@ -104,26 +85,23 @@ function attemptProxyWeb3() {
           return _originalSend(...args);
         };
       }
-      return target[key];
+      return Reflect.get(...arguments);
     },
-    set(target, key, value, receiver) {
-      console.log('SET RUN');
+    set(target, key, value) {
       if (key === 'currentProvider') {
         console.log('PROXY - setting current provider');
       }
-      target[key] = value;
-      return true;
+      // target[key] = value;
+      return Reflect.set(target, key, value);
     },
   });
-  window.devtoolsProxyProvider = devtoolsProxyProvider;
+  console.log('created proxy provider', window.devtoolsProxyProvider);
 }
 
 function attemptPatchWeb3() {
-  attemptProxyWeb3(window);
-  window.devtoolsProxyProvider = window.devtoolsProxyProvider;
-
-  console.log('created proxy provider', window.devtoolsProxyProvider);
+  console.log('PATCHING WEB3');
   // replace provider with our proxy
+  console.log('window.web3', window.web3);
   console.log('replacing web3.currentProvider', window.web3.currentProvider);
   window.web3.currentProvider = window.devtoolsProxyProvider;
   console.log('replacing web3.ethereum', window.web3.ethereum);
@@ -131,38 +109,5 @@ function attemptPatchWeb3() {
   console.log('replaced web3 with our proxy', window.web3.currentProvider, window.ethereum);
 }
 
-attemptProxyWeb3();
+createProxyProvider();
 attemptPatchWeb3();
-
-// used to broadcast messages from any extension components
-// NOTE: This function is duplicated here rather than imported from message-passing.js because it fixes a bug on certain websites. No idea why :).
-async function broadcastMessage(payload) {
-  return new Promise((resolve, reject) => {
-    // if broadcasting from a webpage (not a content script, but one actually injected into the page)
-    // then we cannot use chrome.runtime.sendMessage, and must instead use window.postMessage
-    // to pass our message via the content script
-
-    const fullPayload = {
-      _msgSource: process.env.EXTENSION_MESSAGE_ID,
-      ...(typeof payload === 'string' ? { message: payload } : payload),
-    };
-
-    if (chrome.devtools) {
-      fullPayload._inspectedTabId = chrome.devtools.inspectedWindow.tabId;
-    }
-
-    // detect if we are in a webpage
-    if (!chrome.runtime.id) {
-    // pass the message via the window to our content script which will relay it
-      window.postMessage(JSON.stringify(fullPayload), window.origin);
-    } else {
-      console.log('> sending message from chrome.runtime.sendMessage', fullPayload);
-      chrome.runtime.sendMessage(process.env.EXTENSION_ID, fullPayload, (response) => {
-        console.log('< response from extension', response);
-        resolve(response);
-      });
-      // } else {
-      //   chrome.runtime.sendMessage(process.env.EXTENSION_ID, fullPayload);
-    }
-  });
-}
