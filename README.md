@@ -16,18 +16,19 @@ Live reloading will mostly handle things for you, but if you change the manifest
 
 Also some specific errors may require going back to `chrome://extensions` and re-loading the plugin.
 
+**IMPORTANT:** Make sure the EXTENSION_ID in your env file matches the extension ID that chrome provides when you install the unpacked extension
 
 ## Building for production
 
 run `npm run build`
 
+This will build the repo and zip it up into a zip file in the dist folder that can be uploaded to the chrome app store or shared with others.
 
 ## Configuration
 
 Configuration is stored in config/env.js and exposed in `process.env` via `webpack.DefinePlugin`. Defaults are loaded first and then overrides depending on the env being built for.
 
 Optionally, you can create a `config/local.js` file (not checked into git) with overrides to be loaded only during local development.
-
 
 ### Credits
 
