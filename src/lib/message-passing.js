@@ -70,3 +70,9 @@ export function initializeWebpageMessageRelayer() {
     chrome.runtime.sendMessage(process.env.EXTENSION_ID, messageData);
   });
 }
+
+export function listenForOpenResources(resourceHandler) {
+  chrome.devtools.panels.setOpenResourceHandler((resource) => {
+    resourceHandler(resource);
+  });
+}

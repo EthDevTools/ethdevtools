@@ -7,7 +7,7 @@ import Vuex from 'vuex';
 import AbiDecoder from 'abi-decoder';
 
 
-import { broadcastMessage, listenForMessagesFromTab } from '@/lib/message-passing';
+import { broadcastMessage, listenForMessagesFromTab, listenForOpenResources } from '@/lib/message-passing';
 
 
 Vue.use(Vuex);
@@ -104,13 +104,9 @@ const store = new Vuex.Store({
     },
     ADD_CONTRACT: (state, payload) => {
       console.log('ADD_CONTRACT', { payload });
-      Vue.set(state.contracts, payload.address.toLowerCase(), payload);
-      Vue.set(state.logs, `contract|${payload.address}`, {
-        time: +new Date(),
-        type: 'contract',
-        address: payload.address,
-      });
-      AbiDecoder.addABI(payload.abi);
+      const newContracts = state.contracts.concat(payload);
+      state.contracts = newContracts;
+      AbiDecoder.addABI(payload);
     },
   },
   actions: {
@@ -152,6 +148,9 @@ const store = new Vuex.Store({
         store.commit('ADD_MESSAGE_LOG', payload);
       }
     },
+    processContract(ctx, abiJSON) {
+      ctx.commit('ADD_CONTRACT', abiJSON);
+    },
     logMessage(ctx, payload) {
       console.log('log message action');
       ctx.commit('ADD_MESSAGE_LOG', payload);
@@ -166,6 +165,20 @@ listenForMessagesFromTab(chrome.devtools.inspectedWindow.tabId, (payload, sender
   console.log('👂 devtools panel store heard runtime message');
   console.log(payload);
   store.dispatch('processEvent', payload);
+});
+
+listenForOpenResources((resource) => {
+  resource.getContent((content) => {
+    console.log('resource opened: ', content);
+    let contentJSON;
+    try {
+      const contentJSON = JSON.parse(content);
+      console.log(contentJSON);
+      store.dispatch('processContract', contentJSON);
+    } catch (err) {
+
+    }
+  });
 });
 
 export default store;
