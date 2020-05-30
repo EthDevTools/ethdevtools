@@ -22,7 +22,6 @@ module.exports = {
     '*://*/*',
     'activeTab', // required to inject scripts in current tab
     'tabs',
-    'cookies',
     'background',
     'contextMenus', // for context menu - make sure to include a size 16 icon for this
     'unlimitedStorage',

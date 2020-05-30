@@ -3,7 +3,8 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
 
 const BUILD_PATH = path.resolve(__dirname, '../dist');
 
@@ -35,8 +36,7 @@ const prodWebpackConfig = merge(baseWebpackConfig, {
     },
   },
   plugins: [
-    new CleanWebpackPlugin(BUILD_PATH, {
-      allowExternal: true,
+    new CleanWebpackPlugin({
       verbose: false,
     }),
     new MiniCssExtractPlugin({
@@ -44,6 +44,9 @@ const prodWebpackConfig = merge(baseWebpackConfig, {
     }),
     // keep module.id stable when vendor modules does not change
     new webpack.HashedModuleIdsPlugin(),
+    new ZipPlugin({
+      filename: 'extension.zip',
+    })
   ],
   stats: {
     colors: true,

@@ -14,7 +14,7 @@ const configsByEnv = {
 
     CHROME_STORAGE_ENGINE: 'local', // can switch to 'sync' - see lib/storage-helpers
     EXTENSION_MESSAGE_ID: 'ethdevtools', // to identify messages from our extension - see lib/message-passing
-    EXTENSION_ID: 'kalkibnckdbnmcficgcbjgfhpgpclboi',
+    EXTENSION_ID: 'dekliajoimdccgincpdmkadhgoibpida',
   },
   development: {
   },
