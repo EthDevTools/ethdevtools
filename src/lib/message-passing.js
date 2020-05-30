@@ -24,6 +24,7 @@ export async function broadcastMessage(payload) {
     // pass the message via the window to our content script which will relay it
       window.postMessage(JSON.stringify(fullPayload), window.origin);
     } else {
+      console.log('> sending message from chrome.runtime.sendMessage', fullPayload);
       chrome.runtime.sendMessage(process.env.EXTENSION_ID, fullPayload, (response) => {
         console.log('< response from extension', response);
         resolve(response);

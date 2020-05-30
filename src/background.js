@@ -21,8 +21,8 @@ const WEB3_ACTIONS = ['enable', 'send'];
 
 listenForMessages((payload, sender, reply) => { // eslint-disable-line consistent-return
   console.log('👂 background heard runtime message');
-  console.log(sender.tab ? `TAB #${sender.tab.id}` : sender);
-  console.log(payload);
+  console.log('sender: ', sender.tab ? `TAB #${sender.tab.id}` : sender);
+  console.log('payload: ', payload);
 
   const { action } = payload;
 
@@ -34,12 +34,12 @@ listenForMessages((payload, sender, reply) => { // eslint-disable-line consisten
 
   // Handle actions that do not tell us that
   if (action === 'check_devtools_enabled') {
-    console.log('enabled ? ', tabs[tabId].enabled);
+    console.log('replying with: ', tabs[tabId].enabled);
     return reply(tabs[tabId].enabled);
   } else if (action === 'page_reload') {
     tabs[tabId].history = [];
   } else if (action === 'fetch_events_history') {
-    console.log(tabs[tabId].history);
+    console.log('replying with:', tabs[tabId].history);
     return reply(tabs[tabId].history);
   } else if (WEB3_ACTIONS.includes(action)) {
     tabs[tabId].enabled = true;
