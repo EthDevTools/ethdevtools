@@ -19,7 +19,7 @@ export async function broadcastMessage(payload) {
     }
 
     // detect if we are in a webpage
-    if (!chrome.runtime.id) {
+    if (!chrome.runtime || !chrome.runtime.id) {
       // console.log('> sending message from webpage', fullPayload, window.origin);
       // pass the message via the window to our injector script which will relay it
       window.postMessage(JSON.stringify(fullPayload), window.origin);
